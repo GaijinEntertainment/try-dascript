@@ -20,10 +20,12 @@
 
 <body onload="pageInit()">
 
+
 <script type="text/javascript" src="./src/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="./src/codemirror.min.js"></script>
 
 <script type="text/javascript" src="./src/main.js"></script>
+<script type="text/javascript" src="./daScript.js"></script>
 
 <div class="header">
     <img src="https://dascript.org/doc/_static/daScript.png" height="100%">
@@ -60,7 +62,7 @@
             <div class="main_header_left">
 
                 <div class="main_header_part">
-                    <div class="main_name">Source</div>
+                    <div id="main_name">Source</div>
                 </div>
 
                 <div class="main_header_part">
@@ -75,6 +77,9 @@
 
             <div class="main_header_right">
 
+                <div class="main_header_part">
+                    <div id="main_status">...</div>
+                </div>
 
                 <div class="main_header_part">
                     <button class="button_header" onclick="runCode()">Run</button>
@@ -122,6 +127,7 @@
                 </div>
 
                 <div class="main_header_part">
+
                     <button class="button_header" onclick="runTests()">Run all tests</button>
                 </div>
 
@@ -133,10 +139,56 @@
         <div class="main_col_part">
             <div id="output">
             </div>
-
         </div>
 
     </div>
+
+
+</div>
+
+
+
+<div id="options">
+
+    <br>
+    <div class="options_line">
+        <div>
+            <button class="button_header" onclick="newFile()">New File</button>
+            <button class="button_header" onclick="loadFile(event)">Load File</button>
+            <button class="button_header" onclick="removeFile()">Remove</button>
+        </div>
+
+        <div>
+            <label for="file_path_input">Path:</label>
+            <input name="file_path_value" id="file_path_input" class="input_header" oninput="inputPathValue()" style="width:200px">
+        </div>
+
+        <div>
+            <label for="file_name_input">File:</label>
+            <input name="file_name_value" id="file_name_input" class="input_header" oninput="inputNameValue()" style="width:200px">
+        </div>
+    </div>
+
+
+
+
+    <div id="file_browser">
+
+    </div>
+    <br>
+
+
+    <div class="options_line">
+        <div>
+            <button class="button_header" id="runtime_button" onclick="selectForRuntime()">Select For Runtime</button>
+        </div>
+        <div>
+            <label for="func_name">Function:</label>
+            <input name="func_name" id="func_name" class="input_header" oninput="inputFuncName()"  style="width:60px">
+        </div>
+    </div>
+
+
 </div>
 
 <footer>
