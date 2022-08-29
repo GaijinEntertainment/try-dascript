@@ -96,6 +96,10 @@ footer_p {
     height: 35px;
 }
 
+.input_header {
+    font-size: 21px;
+    height: 30px;
+}
 
 
 .select_header {
@@ -134,6 +138,12 @@ footer_p {
     overflow-y: scroll;
 }
 
+#options {
+
+    padding-right: 1vw;
+    padding-left: 1vw;
+}
+
 
 .output_line {
     font-family: Consolas, Menlo, Monaco, monospace;
@@ -170,7 +180,44 @@ footer_p {
     user-select: none;
 }
 
+#file_browser {
+    font-size: 18px;
+    margin-top: 20px;
+    height: 20vh;
+    width: 100%;
 
+
+    border: 1px solid #8d8d8d;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.file_line {
+    font-family: Consolas, Menlo, Monaco, monospace;
+    width: 100%;
+
+    display: block;
+    cursor: pointer;
+}
+
+.file_path {
+    color: #8d8d8d;
+    display: inline-block;
+    margin: 5px;
+}
+
+.file_name {
+    color: #000000;
+    display: inline-block;
+    margin: 5px;
+}
+
+.options_line {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 12px
+
+}
 
 @media (orientation: portrait)
 {
@@ -182,8 +229,12 @@ footer_p {
         height: 20px;
     }
 
-    .main_name {
+    #main_name {
         font-size: 18px;
+    }
+
+    #main_status {
+        font-size: 14px;
     }
 
     .main_header

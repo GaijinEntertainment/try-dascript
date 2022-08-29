@@ -3,38 +3,313 @@
   "examples" : [
     {
       "name" : "Hello world",
-      "files" : ["examples/hello.das"]
+      "files" : [
+        {"name":"main.das",
+          "url": "./samples/examples/hello.das"}
+      ],
+      "func": "main"
     },
     {
       "name" : "Loops",
-      "files" : ["examples/loop.das"]
+      "files" : [
+        {"name":"main.das",
+          "url": "./samples/examples/loop.das"}
+      ],
+      "func": "main"
     },
     {
       "name" : "Functions",
-      "files" : ["examples/func.das"]
+      "files" : [
+        {"name":"main.das",
+          "url": "./samples/examples/func.das"}
+      ],
+      "func": "main"
     }
   ],
 
   "tests" : [
     {
       "name" : "Print",
-      "files" : ["tests/print.das"],
+      "files" : [
+        {"name":"main.das",
+          "url": "./samples/tests/print.das"}
+      ],
+      "func": "test",
       "correct_output" : ["4","","Hello world"]
     },
     {
       "name" : "Simple Math",
-      "files" : ["tests/math_simple.das"],
+      "files" : [
+        {"name":"main.das",
+          "url": "./samples/tests/math_simple.das"}
+      ],
+      "func": "test",
       "correct_output" : ["-5","27","30603303"]
     },
     {
-      "name" : "Math",
-      "files" : ["tests/math.das"],
-      "correct_output" : []
+      "name" : "Large Dictionary",
+      "files" :[
+        {"name":"main.das",
+          "url": "./samples/tests/large_dictionary.das"}
+      ],
+      "func": "test",
+      "correct_output" : [["\"dictionary\",", null, "20"]]
     },
     {
-      "name" : "Random Sequence",
-      "files" : ["tests/random_sequence.das"],
-      "correct_output" : [["\"dictionary\",", null, "20"]]
+      "name" : "SHA256",
+      "files" :[
+        {"name":"main.das",
+          "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/profile/tests/sha256.das"}
+      ],
+      "func": "test",
+      "correct_output" : [["\"sha256\",", null, "20"],null]
+    },
+    {
+      "name" : "Primes Loop",
+      "files" :[
+        {"name":"main.das",
+          "url": "./samples/tests/primes.das"}
+      ],
+      "func": "test",
+      "correct_output" : [["\"primes","loop\",", null, "20"],["\"primes","loop,","inline\",", null, "20"]]
+
+    },
+    {
+      "name" : "Generators",
+      "files" :[
+        {"name":"generators.das",
+          "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/profile/tests/generators.das",
+          "path":"examples/profile/tests/"
+        },
+        {
+          "name": "functional.das",
+          "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/daslib/functional.das",
+          "path":"daslib/"
+        },
+        {
+          "name": "strings_boost.das",
+          "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/daslib/strings_boost.das",
+          "path":"daslib/"
+        }
+      ],
+      "func": "test",
+      "correct_output" : []
+
     }
-  ]
+  ],
+  "unit_test_dependencies": [
+    {
+      "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/test/unit_tests/",
+      "files": ["_a.das",
+        "_apply_macro.das",
+        "_array_reader.das",
+        "_b.das",
+        "_c.das",
+        "_enum_total.das",
+        "_hint_macros.das",
+        "_include.inc",
+        "_include_mod.das",
+        "_moduleEnum.das",
+        "_module_a.das",
+        "_module_b.das",
+        "_typeinfo_macro_example.das",
+        "include_file.das_inc",
+        "int_crash.das_inc"],
+      "to_path": "unit_tests/"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/daslib/",
+      "files": [
+        "assert_once.das",
+        "ast_boost.das",
+        "strings_boost.das",
+        "templates_boost.das",
+        "algorithm.das",
+        "array_boost.das",
+        "templates.das",
+        "contracts.das",
+        "utf8_utils.das",
+        "jobque_boost.das",
+        "defer.das",
+        "functional.das",
+        "random.das",
+        "safe_addr.das",
+        "if_not_null.das",
+        "is_local.das",
+        "macro_boost.das"
+      ],
+      "to_path": "daslib/"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/test/hidden_test/",
+      "files": ["_hidden_test.das"],
+      "to_path": "/examples/test/hidden_test/"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/test/hidden_module/",
+      "files": ["hidden.das"],
+      "to_path": "/examples/test/hidden_module/"
+    }
+  ],
+  "unit_tests" : {
+
+    "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/test/unit_tests/",
+    "to_path": "unit_tests/",
+    "files": [
+      "abc",
+      "access_private_from_lambda",
+      "aka",
+      "aotAddConstFloat3",
+      "aotModuleEnum",
+      "aot_const_ptr",
+      "apply_macro_example",
+      "array_comprehension",
+      "array_reader_example",
+      "at_safeat_field_safefield_operators",
+      "auto_infer",
+      "auto_ref_and_move_ret",
+      "bin_serializer",
+      "bitfields",
+      "block",
+      "block_access_function_arg",
+      "block_args_nested",
+      "capture_as_ref",
+      "cast",
+      "check_defer",
+      "check_type_info_macro",
+      "clone_temp",
+      "clone_to_move",
+      "copy_and_move_on_return",
+      "ctor",
+      "dim",
+      "dynamic_array",
+      "enum_total_test",
+      "fast_to_int",
+      "fastcall_crash",
+      "finalizer_in_module",
+      "finally",
+      "fio",
+      "foo_bar",
+      "for-loop",
+      "for_array_with_1_element",
+      "for_const_array",
+      "for_continue",
+      "fun",
+      "generators",
+      "global",
+      "global_func_shadow_check",
+      "global_order",
+      "hint_macros_example",
+      "ifnn",
+      "include",
+      "infer_alias_and_alias_ctor",
+      "infer_alias_argument",
+      "infer_remove_ref_const",
+      "init_script",
+      "inscope_return_inscope",
+      "int_types",
+      "invoke_cmres",
+      "join",
+      "label",
+      "lambda",
+      "lambda_capture_modes",
+      "lambda_to_iter",
+      "local_reference",
+      "lock_forever",
+      "loop_ret",
+      "make_default",
+      "make_local",
+      "make_struct_with_clone",
+      "map_to_a",
+      "mat_crash",
+      "mat_let_handle",
+      "math",
+      "memzero",
+      "method_semantic",
+      "module",
+      "module_vis_fail",
+      "move_lambda_local_ref",
+      "named_call",
+      "new_with_init",
+      "oop",
+      "operator_overload",
+      "operators",
+      "override",
+      "pack_and_unpack",
+      "partial_specialization",
+      "peek_and_modify_string",
+      "persistent",
+      "ptr_index",
+      "reflection",
+      "replace",
+      "req_inc",
+      "return_reference",
+      "rpipe",
+      "rtti_module",
+      "saddr",
+      "safe_index",
+      "set_table",
+      "setand_and_setor_bool",
+      "shared",
+      "sort",
+      "sorted_array_test",
+      "split",
+      "split_by_chars",
+      "stackwalk",
+      "static_if",
+      "storage_types",
+      "string_builder",
+      "struct",
+      "swizze",
+      "test_bool_if",
+      "test_fs_file_access",
+      "test_move_on_return",
+      "test_template",
+      "time",
+      "toarray",
+      "totable",
+      "tuple",
+      "typeinfo",
+      "typename",
+      "types",
+      "unused_arguments",
+      "utf8",
+      "vec_ctors",
+      "vec_index",
+      "vec_swizzle",
+      "with"
+    ],
+    "crashes": [
+    ],
+    "needs_unit_test_das" : [
+      "add_property_ext_const",
+      "alias_on_let_init",
+      "array",
+      "check_eid",
+      "clone",
+      "cpp_layout",
+      "das_string",
+      "deref_ptr_fun",
+      "dummy",
+      "each_std_vector",
+      "enum",
+      "fully_qualified_generic_name",
+      "handle",
+      "int2_crash",
+      "line_info",
+      "lock_array",
+      "make_handle",
+      "mksmart_zero",
+      "new_and_init",
+      "new_delete",
+      "null_struct_init",
+      "smart_ptr",
+      "stackwalk",
+      "stdvec_r2v",
+      "structure_annotation",
+      "take_ref_alias",
+      "typeAlias",
+      "variant"
+    ]
+  }
 }

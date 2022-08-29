@@ -1,5 +1,5 @@
 [export]
-def main
+def test
     var c = 4
     print("{c}\n")
     print("\n")
