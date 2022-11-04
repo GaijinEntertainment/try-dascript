@@ -4,6 +4,8 @@ var editorOutputDiv;
 var editorFilesDiv;
 var samplesData;
 
+var fileNameCaption;
+
 
 var code;
 
@@ -28,9 +30,115 @@ var editorFilePathDiv = [];
 var editorFileNameDiv = [];
 
 
+var separatorDiv = [];
+var mainColumnDiv = [];
+var mainColumnNum = 3;
+
+var mainColPos = [2/10,6/10];
+
+var selectedSeparator = -1;
+
+updateMainCol = function() {
+
+
+    let wp = [];
+
+    for (let i=0;i<mainColumnNum-1;i++)
+        wp.push(Math.round(mainColPos[i]*window.innerWidth));
+
+
+    for (let i=0;i<mainColumnNum-1;i++)
+    {
+
+        
+        separatorDiv[i].style.left = (wp[i]-10)+"px"
+        mainColumnDiv[i+1].style.left = (wp[i])+"px"
+    }
+
+
+    mainColumnDiv[0].style.width = wp[0]-10+"px";
+    
+    mainColumnDiv[1].style.width = (wp[1]-wp[0]-10)+"px";
+    
+    mainColumnDiv[2].style.width = (window.innerWidth-wp[1]-10)+"px";
+
+    
+}
+
+setMainColPos = function(e) {
+
+    e.preventDefault();
+    let xx = e.clientX;
+    let wp = xx/window.innerWidth;
+
+
+    let minw = 0.05;
+    let maxw = 1-0.05;
+
+    if (selectedSeparator>0)
+        minw = mainColPos[selectedSeparator-1]+0.05;
+
+    if (selectedSeparator<mainColumnNum-2)
+        maxw = mainColPos[selectedSeparator+1]-0.05;
+
+    if (wp>maxw)
+        wp = maxw;
+
+    if (wp<minw)
+        wp = minw;
+
+    mainColPos[selectedSeparator] = wp;
+
+    updateMainCol();
+}
+
 pageInit = function () {
 
     //$.getScript("daScript.js")
+
+
+
+    for (let i=0;i<mainColumnNum-1;i++)
+    {   
+        
+    }
+    
+
+    for (let i=0;i<mainColumnNum;i++)
+    {
+
+
+        let mc = document.getElementById("main_col"+(i+1));
+
+        mainColumnDiv.push(mc);
+    }
+
+
+    for (let i=0;i<mainColumnNum-1;i++)
+    {
+        let sep = document.getElementById("separator"+(i+1));
+
+        sep.addEventListener("mousedown",function(e){
+            if (selectedSeparator===-1)
+                selectedSeparator = i;
+        })
+
+        //sep.style.left = (sp[i])+"px"
+
+        separatorDiv.push(sep);
+    }
+    window.addEventListener("mousemove",function(e){
+        if (selectedSeparator!==-1)
+            setMainColPos(e);
+
+    });
+
+    window.addEventListener("mouseup", function(e){
+        selectedSeparator = -1;
+    });
+
+
+    updateMainCol();
 
     setPageStatus("Loading WASM","#ff0000")
 
@@ -46,6 +154,9 @@ pageInit = function () {
     editorFileNameInputDiv = document.getElementById("file_name_input");
     editorFuncDiv = document.getElementById("func_name");
     editorRuntimeButton = document.getElementById("runtime_button");
+
+    
+    fileNameCaption = document.getElementById("file_name_caption");
 
 
     code = CodeMirror( editorCodeDiv, {
@@ -174,6 +285,139 @@ inputFuncName = function() {
 updateFileBrowser = function(updateSource) {
 
 
+
+    let files = [];
+
+    for (let i=0;i<editorFilesData.length;i++)
+    {
+        let p = editorFilesData[i].path.split('/');
+
+
+
+        let currentDir = files;
+        for (let j=0;j<p.length-1;j++)
+            {
+                
+
+                let found = null;
+                for (let k=0;k<currentDir.length;k++)
+                    if (currentDir[k].name==p[j])
+                    {
+                        found = currentDir[k].files;
+                    }
+
+                if (found == null)
+                {
+                    currentDir.push({'name':p[j],'type':'directory','files':[]})
+
+                    found = currentDir[currentDir.length-1].files;
+                }
+                
+
+                currentDir = found;
+            }
+        
+        currentDir.push({'name':editorFilesData[i].name,'type':'file','index':i})
+    }
+
+    console.log(files);
+
+    let filesTraversal = [];
+
+    let traverse = function(f,depth)
+    {
+        for (let i=0;i<f.length;i++)
+            if (f[i].type=='directory')
+            {
+                filesTraversal.push({'name':f[i].name,'type':'directory','depth':depth})
+                traverse(f[i].files,depth+1);
+            }
+            else if (f[i].type=='file')
+            {
+                filesTraversal.push({'name':f[i].name,'type':'file','depth':depth,'index':f[i].index})
+            }
+    }
+    traverse(files,0);
+
+
+
+    console.log(filesTraversal)
+
+    for (let i=0;i<Math.max(filesTraversal.length,editorFileGroupDiv.length);i++)
+    {
+
+        if (i<filesTraversal.length)
+        {
+
+            if (i<editorFileGroupDiv.length)
+            {
+                editorFileGroupDiv[i].style.display = "block";
+
+
+
+            }
+            else
+            {
+                let groupDiv = document.createElement("div");
+                groupDiv.classList.add("file_line");
+
+                let pathDiv = document.createElement("div");
+                pathDiv.classList.add("file_path");
+                groupDiv.appendChild(pathDiv);
+                editorFilePathDiv.push(pathDiv);
+
+                let nameDiv = document.createElement("div");
+                nameDiv.classList.add("file_name");
+                groupDiv.appendChild(nameDiv);
+                editorFileNameDiv.push(nameDiv);
+
+                editorFileGroupDiv.push(groupDiv);
+                editorFilesDiv.appendChild(groupDiv);
+
+                editorFileGroupDiv[i].addEventListener('click',selectFile,false);
+
+                editorFileNameDiv[i].selectFileIndex = editorFilePathDiv[i].selectFileIndex = editorFileGroupDiv[i].selectFileIndex = -1;
+            }
+
+
+
+            let pre = new Array(filesTraversal[i].depth+1).join( "&ensp;" );
+
+            if (filesTraversal[i].type==='directory')
+            {
+
+                editorFilePathDiv[i].innerHTML = pre+filesTraversal[i].name;
+                editorFileNameDiv[i].innerHTML = "";
+
+                editorFileGroupDiv[i].style.backgroundColor = "#FFFFFF";
+                editorFileGroupDiv[i].style.fontWeight = "normal";
+
+                editorFileNameDiv[i].selectFileIndex = editorFilePathDiv[i].selectFileIndex = editorFileGroupDiv[i].selectFileIndex = -1;
+
+    
+            }
+            else if (filesTraversal[i].type==='file')
+            {
+                
+                editorFileNameDiv[i].selectFileIndex = editorFilePathDiv[i].selectFileIndex = editorFileGroupDiv[i].selectFileIndex = filesTraversal[i].index;
+
+                editorFilePathDiv[i].innerHTML = "";
+                editorFileNameDiv[i].innerHTML = pre+filesTraversal[i].name;
+
+                editorFileGroupDiv[i].style.backgroundColor = filesTraversal[i].index===editorSelectedFile ? "#e1e4f3" : "#FFFFFF";
+                editorFileGroupDiv[i].style.fontWeight = filesTraversal[i].index===editorRuntimeFile ? "bold" : "normal";
+            }
+
+            //
+        }
+        else
+        {
+            editorFileGroupDiv[i].style.display = "none";
+        }
+
+    }
+
+    /*
     for (let i=0;i<Math.max(editorFilesData.length,editorFileGroupDiv.length);i++)
     {
 
@@ -222,11 +466,13 @@ updateFileBrowser = function(updateSource) {
             editorFileGroupDiv[i].style.display = "none";
         }
 
-    }
-
-
+    }*/
+    
     if (editorSelectedFile===-1)
     {
+
+
+        fileNameCaption.innerText = "";
 
         code.setValue("");
         editorFilePathInputDiv.value = "";
@@ -237,6 +483,7 @@ updateFileBrowser = function(updateSource) {
     }
     else
     {
+        fileNameCaption.innerText = editorFilesData[editorSelectedFile].name;
 
         editorRuntimeButton.disabled = editorSelectedFile === editorRuntimeFile;
 
@@ -247,40 +494,8 @@ updateFileBrowser = function(updateSource) {
     }
 
     editorFuncDiv.value = funcName;
-
-
-
-
-
-    /*while (editorFilesDiv.firstChild) {
-        editorFilesDiv.removeChild(editorFilesDiv.lastChild);
-    }
-
-    for (let i=0;i<editorFilesData.length;i++)
-    {
-
-
-        let out = document.createElement("div");
-        out.classList.add("output_line");
-
-
-        let outPath = document.createElement("div");
-        outPath.classList.add("output_line_text");
-        //outPath.classList.add("unselectable");
-        outPath.innerText = editorFilesData[i].path;
-
-        out.appendChild(outPath);
-
-
-        let outP = document.createElement("p");
-        outP.classList.add("output_line_text");
-        outP.innerText = editorFilesData[i].name;
-
-        out.appendChild(outP);
-
-
-        editorFilesDiv.appendChild(out);
-    }*/
+   
+    
 
 
 
@@ -686,11 +901,12 @@ removeFile = function()
 }
 
 
-selectFile = function(i)
+selectFile = function(event)
 {
 
+    console.log(event);
 
-    editorSelectedFile = i;
+    editorSelectedFile = event.target.selectFileIndex;
 
     updateFileBrowser();
 }
@@ -734,4 +950,14 @@ window.onerror = function(message)
 
     printOutput("An error occurred, you may need to reload the page",'#ff9393');
 }
+
+window.onresize = function() 
+{
+
+    updateMainCol();
+}
+
+
+
+
 
