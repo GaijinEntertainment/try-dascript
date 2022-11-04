@@ -1,18 +1,22 @@
 
-var editorCodeDiv;
-var editorOutputDiv;
-var editorFilesDiv;
+const Editor = function()
+{
+    
+}
+
+
+
+var editorFileSystem;
+var editorCode; 
+var editorOutput;
+var editorFiles;
+
+
+
+
 var samplesData;
 
-var fileNameCaption;
 
-
-var code;
-
-var editorFilePathInputDiv;
-var editorFileNameInputDiv;
-var editorFuncDiv;
-var editorRuntimeButton;
 
 var sampleList = {"examples":null, "tests":null};
 
@@ -20,14 +24,10 @@ var sampleList = {"examples":null, "tests":null};
 
 var editorSelectedFile = -1;
 var editorRuntimeFile = -1;
-var editorFilesData = [];
+//var editorFilesData = [];
 
 var funcName = "main";
 
-
-var editorFileGroupDiv = [];
-var editorFilePathDiv = [];
-var editorFileNameDiv = [];
 
 
 var separatorDiv = [];
@@ -94,7 +94,12 @@ setMainColPos = function(e) {
 
 pageInit = function () {
 
-    //$.getScript("daScript.js")
+    //$.getScript("daScript.js"
+        
+    editorFileSystem = new FileSystem(null);
+    editorCode = new CodeView(null);
+    editorOutput = new OutputView(null);
+    editorFiles = new FilesView(null);
 
 
 
@@ -143,35 +148,16 @@ pageInit = function () {
     setPageStatus("Loading WASM","#ff0000")
 
 
-    editorCodeDiv = document.getElementById("code");
-    editorOutputDiv = document.getElementById("output");
-    editorFilesDiv = document.getElementById("file_browser");
+
 
     sampleList["examples"] = document.getElementById("examples");
     sampleList["tests"] = document.getElementById("tests");
 
-    editorFilePathInputDiv = document.getElementById("file_path_input");
-    editorFileNameInputDiv = document.getElementById("file_name_input");
-    editorFuncDiv = document.getElementById("func_name");
-    editorRuntimeButton = document.getElementById("runtime_button");
 
     
-    fileNameCaption = document.getElementById("file_name_caption");
 
 
-    code = CodeMirror( editorCodeDiv, {
-        lineNumbers: true, matchBrackets: true, indentWithTabs: false, styleActiveLine: true,
-        theme:'eclipse', mode:"application/javascript",
-        tabSize: 4, indentUnit: 4, highlightSelectionMatches: {showToken: /\w/}
-    });
 
-    code.on('change', function(c){
-        let text = c.doc.getValue()
-
-
-        if (editorSelectedFile>=0)
-            editorFilesData[editorSelectedFile].text = text;
-    });
 
 
     $.getJSON( "./samples/data.json", function(res) {
@@ -255,251 +241,7 @@ setPageStatus = function(text,color) {
     sDiv.innerText = text;
 }
 
-inputPathValue = function() {
 
-
-    if (editorSelectedFile!==-1)
-    {
-
-        editorFilesData[editorSelectedFile].path = editorFilePathInputDiv.value;
-        updateFileBrowser();
-    }
-}
-
-inputNameValue = function() {
-    if (editorSelectedFile!==-1)
-    {
-        editorFilesData[editorSelectedFile].name = editorFileNameInputDiv.value;
-        updateFileBrowser();
-    }
-}
-
-inputFuncName = function() {
-
-
-
-    funcName = editorFuncDiv.value;
-    updateFileBrowser();
-}
-
-updateFileBrowser = function(updateSource) {
-
-
-
-    let files = [];
-
-    for (let i=0;i<editorFilesData.length;i++)
-    {
-        let p = editorFilesData[i].path.split('/');
-
-
-
-        let currentDir = files;
-        for (let j=0;j<p.length-1;j++)
-            {
-                
-
-                let found = null;
-                for (let k=0;k<currentDir.length;k++)
-                    if (currentDir[k].name==p[j])
-                    {
-                        found = currentDir[k].files;
-                    }
-
-                if (found == null)
-                {
-                    currentDir.push({'name':p[j],'type':'directory','files':[]})
-
-                    found = currentDir[currentDir.length-1].files;
-                }
-                
-
-                currentDir = found;
-            }
-        
-        currentDir.push({'name':editorFilesData[i].name,'type':'file','index':i})
-    }
-
-    console.log(files);
-
-    let filesTraversal = [];
-
-    let traverse = function(f,depth)
-    {
-        for (let i=0;i<f.length;i++)
-            if (f[i].type=='directory')
-            {
-                filesTraversal.push({'name':f[i].name,'type':'directory','depth':depth})
-                traverse(f[i].files,depth+1);
-            }
-            else if (f[i].type=='file')
-            {
-                filesTraversal.push({'name':f[i].name,'type':'file','depth':depth,'index':f[i].index})
-            }
-    }
-    traverse(files,0);
-
-
-
-    console.log(filesTraversal)
-
-    for (let i=0;i<Math.max(filesTraversal.length,editorFileGroupDiv.length);i++)
-    {
-
-        if (i<filesTraversal.length)
-        {
-
-            if (i<editorFileGroupDiv.length)
-            {
-                editorFileGroupDiv[i].style.display = "block";
-
-
-
-            }
-            else
-            {
-                let groupDiv = document.createElement("div");
-                groupDiv.classList.add("file_line");
-
-                let pathDiv = document.createElement("div");
-                pathDiv.classList.add("file_path");
-                groupDiv.appendChild(pathDiv);
-                editorFilePathDiv.push(pathDiv);
-
-                let nameDiv = document.createElement("div");
-                nameDiv.classList.add("file_name");
-                groupDiv.appendChild(nameDiv);
-                editorFileNameDiv.push(nameDiv);
-
-                editorFileGroupDiv.push(groupDiv);
-                editorFilesDiv.appendChild(groupDiv);
-
-                editorFileGroupDiv[i].addEventListener('click',selectFile,false);
-
-                editorFileNameDiv[i].selectFileIndex = editorFilePathDiv[i].selectFileIndex = editorFileGroupDiv[i].selectFileIndex = -1;
-            }
-
-
-
-            let pre = new Array(filesTraversal[i].depth+1).join( "&ensp;" );
-
-            if (filesTraversal[i].type==='directory')
-            {
-
-                editorFilePathDiv[i].innerHTML = pre+filesTraversal[i].name;
-                editorFileNameDiv[i].innerHTML = "";
-
-                editorFileGroupDiv[i].style.backgroundColor = "#FFFFFF";
-                editorFileGroupDiv[i].style.fontWeight = "normal";
-
-                editorFileNameDiv[i].selectFileIndex = editorFilePathDiv[i].selectFileIndex = editorFileGroupDiv[i].selectFileIndex = -1;
-
-    
-            }
-            else if (filesTraversal[i].type==='file')
-            {
-                
-                editorFileNameDiv[i].selectFileIndex = editorFilePathDiv[i].selectFileIndex = editorFileGroupDiv[i].selectFileIndex = filesTraversal[i].index;
-
-                editorFilePathDiv[i].innerHTML = "";
-                editorFileNameDiv[i].innerHTML = pre+filesTraversal[i].name;
-
-                editorFileGroupDiv[i].style.backgroundColor = filesTraversal[i].index===editorSelectedFile ? "#e1e4f3" : "#FFFFFF";
-                editorFileGroupDiv[i].style.fontWeight = filesTraversal[i].index===editorRuntimeFile ? "bold" : "normal";
-            }
-
-            //
-        }
-        else
-        {
-            editorFileGroupDiv[i].style.display = "none";
-        }
-
-    }
-
-    /*
-    for (let i=0;i<Math.max(editorFilesData.length,editorFileGroupDiv.length);i++)
-    {
-
-        if (i<editorFilesData.length)
-        {
-
-            if (i<editorFileGroupDiv.length)
-            {
-                editorFileGroupDiv[i].style.display = "block";
-
-
-
-            }
-            else
-            {
-                let groupDiv = document.createElement("div");
-                groupDiv.classList.add("file_line");
-
-                let pathDiv = document.createElement("div");
-                pathDiv.classList.add("file_path");
-                groupDiv.appendChild(pathDiv);
-                editorFilePathDiv.push(pathDiv);
-
-                let nameDiv = document.createElement("div");
-                nameDiv.classList.add("file_name");
-                groupDiv.appendChild(nameDiv);
-                editorFileNameDiv.push(nameDiv);
-
-                editorFileGroupDiv.push(groupDiv);
-                editorFilesDiv.appendChild(groupDiv);
-
-                editorFileGroupDiv[i].addEventListener('click',selectFile.bind(event,i),false);
-
-            }
-
-            editorFilePathDiv[i].innerText = editorFilesData[i].path;
-            editorFileNameDiv[i].innerText = editorFilesData[i].name;
-
-
-            editorFileGroupDiv[i].style.backgroundColor = i===editorSelectedFile ? "#e1e4f3" : "#FFFFFF";
-            editorFileGroupDiv[i].style.fontWeight = i===editorRuntimeFile ? "bold" : "normal";
-            //
-        }
-        else
-        {
-            editorFileGroupDiv[i].style.display = "none";
-        }
-
-    }*/
-    
-    if (editorSelectedFile===-1)
-    {
-
-
-        fileNameCaption.innerText = "";
-
-        code.setValue("");
-        editorFilePathInputDiv.value = "";
-
-        editorRuntimeButton.disabled = true;
-
-
-    }
-    else
-    {
-        fileNameCaption.innerText = editorFilesData[editorSelectedFile].name;
-
-        editorRuntimeButton.disabled = editorSelectedFile === editorRuntimeFile;
-
-        code.setValue(editorFilesData[editorSelectedFile].text);
-        editorFilePathInputDiv.value = editorFilesData[editorSelectedFile].path;
-        editorFileNameInputDiv.value = editorFilesData[editorSelectedFile].name;
-
-    }
-
-    editorFuncDiv.value = funcName;
-   
-    
-
-
-
-}
 
 var fileCacheURL = {};
 
@@ -514,8 +256,10 @@ getFiles = function(filesDesc,onComplete) {
 
         if (i>=filesDesc.length)
         {
-
-            onComplete(outFiles);
+            let tempFileSystem = new FileSystem(null);
+            
+            tempFileSystem.setFiles(outFiles);
+            onComplete(tempFileSystem);
             return;
         }
 
@@ -579,7 +323,7 @@ loadSample = function(type,index,updateEnv,onComplete)
         setPageStatus("Loading files","#ff0000")
 
 
-    getFiles(samplesData[type][index].files,function (filesData) {
+    getFiles(samplesData[type][index].files,function (fileSystem) {
 
         /*
         if (updateEnv)
@@ -588,11 +332,12 @@ loadSample = function(type,index,updateEnv,onComplete)
 
         if (updateEnv)
         {
-            editorFilesData = filesData;
+            //editorFilesData = filesData;
+            editorFileSystem = fileSystem;
             editorSelectedFile = 0;
             editorRuntimeFile = 0;
             funcName = samplesData[type][index]["func"];
-            updateFileBrowser();
+            editorFiles.update();
 
         }
 
@@ -601,7 +346,7 @@ loadSample = function(type,index,updateEnv,onComplete)
             setPageStatus("Ready","#000000")
 
         if (onComplete)
-            onComplete(filesData);
+            onComplete(fileSystem);
     })
 
 
@@ -628,15 +373,18 @@ selectSample = function(type,id) {
 
 }
 
-runCode = function() {
+clickRunCode = function() {
 
     let fName = funcName;
 
     //[{"name":"main.das","text":code.getValue()}]
     console.log(fName);
 
-    runScript(editorFilesData,editorFilesData[editorRuntimeFile].path+editorFilesData[editorRuntimeFile].name,fName,fName === "test" ? function () {
-        printOutput( "TEST FINISHED" ,"#4adbdb");
+    runScript(editorFileSystem,
+        //editorFilesData[editorRuntimeFile].path+editorFilesData[editorRuntimeFile].name,
+        editorFileSystem.getFile(editorRuntimeFile).path+editorFileSystem.getFile(editorRuntimeFile).name,
+        fName,fName === "test" ? function () {
+            editorOutput.print( "TEST FINISHED" ,"#4adbdb");
 
 
     } : null);
@@ -657,15 +405,15 @@ var outputPool = [];
 
 runTest = function(i) {
 
-    loadSample('tests',i,false,function(filesData) {
+    loadSample('tests',i,false,function(fileSystem) {
 
-        printOutput("Running Test "+(i+1)+"/"+samplesData["tests"].length+": "+samplesData["tests"][i].name,"#bec7b6");
+        editorOutput.print("Running Test "+(i+1)+"/"+samplesData["tests"].length+": "+samplesData["tests"][i].name,"#bec7b6");
 
         outputPool = [];
 
         fName = samplesData["tests"][i].function_name ? samplesData["tests"][i].function_name : "main";
 
-        runScript(filesData,filesData[0].path+filesData[0].name,samplesData["tests"][i]["func"],function () {
+        runScript(fileSystem,fileSystem.getFile(0).path+fileSystem.getFile(0).name,samplesData["tests"][i]["func"],function () {
 
 
             let ok = true;
@@ -704,7 +452,7 @@ runTest = function(i) {
                     ok = false;
 
 
-            printOutput(samplesData["tests"][i].name+" Test "+(i+1)+"/"+samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "#89db4a": '#ff9393');
+            editorOutput.print(samplesData["tests"][i].name+" Test "+(i+1)+"/"+samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "#89db4a": '#ff9393');
 
             if (i<samplesData["tests"].length-1)
                 runTest(i+1);
@@ -712,53 +460,15 @@ runTest = function(i) {
     })
 }
 
-clearOutput = function() {
-
-    while (editorOutputDiv.firstChild) {
-        editorOutputDiv.removeChild(editorOutputDiv.lastChild);
-    }
-}
-
-
-printOutput = function(text,color) {
-
-    var currentdate = new Date();
-
-
-    let out = document.createElement("div");
-    out.classList.add("output_line");
-    out.style.backgroundColor = color;
-
-
-    let outTime = document.createElement("div");
-    outTime.classList.add("output_line_time");
-    outTime.classList.add("unselectable");
-    outTime.innerText = currentdate.toISOString().substr(11, 12);
-
-    out.appendChild(outTime);
-
-
-    let outP = document.createElement("p");
-    outP.classList.add("output_line_text");
-    outP.innerText = text;
-
-    out.appendChild(outP);
-
-
-    editorOutputDiv.appendChild(out);
-
-
-    editorOutputDiv.scrollTop = editorOutputDiv.scrollHeight;
 
 
 
-}
 
-
-runScript = function(files,mainFile,mainFunc,onComplete)
+runScript = function(tempFileSystem,mainFile,mainFunc,onComplete)
 {
 
 
+    let files = tempFileSystem.getFiles();
     console.log(files);
 
 
@@ -794,127 +504,8 @@ runScript = function(files,mainFile,mainFunc,onComplete)
 
 
 
-    //printOutput(text,"#fff2d2");
-
     if (onComplete)
         onComplete();
-}
-
-
-newFile = function()
-{
-
-    let newN = 0;
-
-    let exists = false;
-
-    for (let i=0;i<editorFilesData.length;i++)
-        if (editorFilesData[i].path === "" && editorFilesData[i].name ==="new.das")
-            exists = true;
-    while (exists)
-    {
-        newN +=1;
-        let fName = "new("+newN+").das";
-
-        exists = false;
-        for (let i=0;i<editorFilesData.length;i++)
-            if (editorFilesData[i].path === "" && editorFilesData[i].name ===fName)
-                exists = true;
-
-    }
-
-    editorFilesData.push({
-        "path":"",
-        "name":"new"+(newN===0 ? "" : "("+newN+")")+".das",
-        "text":""
-    });
-
-    updateFileBrowser();
-}
-
-loadFile = function(ev)
-{
-
-    var el = window._protected_reference = document.createElement("INPUT");
-    el.type = "file";
-    el.multiple = "multiple"
-    el.addEventListener('change', function(ev2) {
-        if (el.files.length) {
-                //document.getElementById('out').src = URL.createObjectURL(el.files[0]);
-
-
-                console.log(el.files);
-
-
-                for (let i=0;i<el.files.length;i++)
-                {
-                    let fr = new FileReader();
-                    fr.readAsText(el.files[i]);
-                    fr.onload = function () {
-
-                        editorFilesData.push({
-                            "path":"",
-                            "name":el.files[i].name,
-                            "text":fr.result
-                        });
-                        updateFileBrowser();
-                    };
-                }
-
-
-
-        }
-
-
-        new Promise(function(resolve) {
-                setTimeout(function() { console.log(el.files); resolve(); }, 1000);
-            })
-                .then(function() {
-
-                    el = window._protected_reference = undefined;
-                });
-
-        });
-
-    el.click();
-
-}
-removeFile = function()
-{
-
-    if (editorSelectedFile>=0)
-    {
-        if (editorSelectedFile===editorRuntimeFile)
-            editorRuntimeFile = -1;
-
-        editorFilesData.splice(editorSelectedFile, 1);
-
-        if (editorSelectedFile>=editorFilesData.length)
-            editorSelectedFile = editorFilesData.length-1;
-
-
-
-
-        updateFileBrowser();
-    }
-
-}
-
-
-selectFile = function(event)
-{
-
-    console.log(event);
-
-    editorSelectedFile = event.target.selectFileIndex;
-
-    updateFileBrowser();
-}
-
-selectForRuntime = function () {
-    editorRuntimeFile = editorSelectedFile;
-    updateFileBrowser();
-
 }
 
 
@@ -935,7 +526,7 @@ var Module = {
                 if (arguments.length > 1)
                     text = Array.prototype.slice.call(arguments).join(' ');
                 console.log(text);
-                printOutput(text,'#ffffff');
+                editorOutput.print(text,'#ffffff');
 
                 outputPool.push(text);
             };
@@ -945,10 +536,9 @@ var Module = {
 window.onerror = function(message)
 {
 
-    printOutput(message,'#ff2d2d');
+    editorOutput.print(message,'#ff2d2d');
 
-
-    printOutput("An error occurred, you may need to reload the page",'#ff9393');
+    editorOutput.print("An error occurred, you may need to reload the page",'#ff9393');
 }
 
 window.onresize = function() 

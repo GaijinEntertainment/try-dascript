@@ -24,6 +24,11 @@
 <script type="text/javascript" src="./src/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="./src/codemirror.min.js"></script>
 
+<script type="text/javascript" src="./src/filesview.js"></script>
+<script type="text/javascript" src="./src/codeview.js"></script>
+<script type="text/javascript" src="./src/outputview.js"></script>
+
+<script type="text/javascript" src="./src/filesystem.js"></script>
 <script type="text/javascript" src="./src/main.js"></script>
 <script type="text/javascript" src="./daScript.js"></script>
 
@@ -103,7 +108,7 @@
             </div>
 
             <div class="main_header_part">
-                <button class="button_header" onclick="runCode()">Run</button>
+                <button class="button_header" onclick="clickRunCode()">Run</button>
             </div>
 
 
@@ -127,9 +132,9 @@
             <div class="main_options_header">File Browser</div>
             
                 <div>
-                    <button class="button_options" onclick="newFile()">New File</button>
-                    <button class="button_options" onclick="loadFile(event)">Load File</button>
-                    <button class="button_options" onclick="removeFile()">Remove</button>
+                    <button class="button_options" onclick="clickNewFile()">New File</button>
+                    <button class="button_options" onclick="clickLoadFile(event)">Load File</button>
+                    <button class="button_options" onclick="clickRemoveFile()">Remove</button>
                 </div>
                 
                 <div>
@@ -145,7 +150,7 @@
 
             
                 <div>
-                    <button class="button_options" id="runtime_button" onclick="selectForRuntime()">Select File For Runtime</button>
+                    <button class="button_options" id="runtime_button" onclick="clickSelectForRuntime()">Select File For Runtime</button>
                 </div>
                 <div>
                     <label for="func_name">Function:</label>
@@ -212,7 +217,7 @@
                 <div class="main_options_header">Output</div>
 
 
-                <button class="button_options" onclick="clearOutput()">Clear</button>
+                <button class="button_options" onclick="clickClearOutput()">Clear</button>
 
             </div>
             
