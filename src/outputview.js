@@ -56,5 +56,5 @@ const OutputView = function(editor)
 clickClearOutput = function() {
 
 
-    editorOutput.clear();
+    editor.outputView.clear();
 }

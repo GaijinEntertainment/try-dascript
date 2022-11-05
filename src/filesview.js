@@ -21,7 +21,7 @@ const FilesView = function(editor)
     this.update = function() 
     {
         
-        let filesTraversal = editorFileSystem.getTreeView();
+        let filesTraversal = this.editor.fileSystem.getTreeView();
 
 
 
@@ -63,8 +63,8 @@ const FilesView = function(editor)
                                             
                         editorSelectedFile = event.target.selectFileIndex;
 
-                        editorFiles.update();
-                    },false);
+                        this.editor.filesView.update();
+                    }.bind(this),false);
 
                     this.fileNameDiv[i].selectFileIndex = this.filePathDiv[i].selectFileIndex = this.fileGroupDiv[i].selectFileIndex = -1;
                 }
@@ -111,7 +111,7 @@ const FilesView = function(editor)
         {
 
 
-            editorCode.setCode("", "");
+            this.editor.codeView.setCode("", "");
             
             this.filePathInputDiv.value = "";
 
@@ -127,12 +127,12 @@ const FilesView = function(editor)
             this.runtimeButton.disabled = editorSelectedFile === editorRuntimeFile;
 
 
-            editorCode.setCode(editorFileSystem.getFile(editorSelectedFile).name, editorFileSystem.getFile(editorSelectedFile).text);
+            this.editor.codeView.setCode(this.editor.fileSystem.getFile(editorSelectedFile).name, this.editor.fileSystem.getFile(editorSelectedFile).text);
             
             //editorFilePathInputDiv.value = editorFilesData[editorSelectedFile].path;
-            this.filePathInputDiv.value = editorFileSystem.getFile(editorSelectedFile).path;
+            this.filePathInputDiv.value = this.editor.fileSystem.getFile(editorSelectedFile).path;
             //editorFileNameInputDiv.value = editorFilesData[editorSelectedFile].name;
-            this.fileNameInputDiv.value = editorFileSystem.getFile(editorSelectedFile).name;
+            this.fileNameInputDiv.value = this.editor.fileSystem.getFile(editorSelectedFile).name;
 
 
         }
@@ -150,9 +150,9 @@ const FilesView = function(editor)
 clickNewFile = function()
 {
 
-    editorFileSystem.newFile();
+    editor.fileSystem.newFile();
 
-    editorFiles.update();
+    editor.filesView.update();
 }
 
 clickLoadFile = function(ev)
@@ -175,12 +175,12 @@ clickLoadFile = function(ev)
                     fr.readAsText(el.files[i]);
                     fr.onload = function () {
 
-                        editorFileSystem.addFile({
+                        editor.fileSystem.addFile({
                             "path":"",
                             "name":el.files[i].name,
                             "text":fr.result
                         });
-                        editorFiles.update();
+                        editor.filesView.update();
                     };
                 }
 
@@ -211,13 +211,13 @@ clickRemoveFile = function()
         if (editorSelectedFile===editorRuntimeFile)
             editorRuntimeFile = -1;
 
-        editorFileSystem.removeFile(editorSelectedFile);
+        editor.fileSystem.removeFile(editorSelectedFile);
 
-        if (editorSelectedFile>=editorFileSystem.getFiles().length)
-            editorSelectedFile = editorFileSystem.getFiles().length-1;
+        if (editorSelectedFile>=editor.fileSystem.getFiles().length)
+            editorSelectedFile = editor.fileSystem.getFiles().length-1;
 
 
-            editorFiles.update();
+            editor.filesView.update();
     }
 
 }
@@ -229,8 +229,8 @@ inputPathValue = function() {
     if (editorSelectedFile!==-1)
     {
         //editorFilesData[editorSelectedFile].path = editorFilePathInputDiv.value;
-        editorFileSystem.getFile(editorSelectedFile).path = editorFiles.filePathInputDiv.value;
-        editorFiles.update();
+        editor.fileSystem.getFile(editorSelectedFile).path = editor.filesView.filePathInputDiv.value;
+        editor.filesView.update();
     }
 }
 
@@ -238,15 +238,15 @@ inputNameValue = function() {
     if (editorSelectedFile!==-1)
     {
         //editorFilesData[editorSelectedFile].name = editorFileNameInputDiv.value;
-        editorFileSystem.getFile(editorSelectedFile).name = editorFiles.fileNameInputDiv.value;
-        editorFiles.update();
+        editor.fileSystem.getFile(editorSelectedFile).name = editor.filesView.fileNameInputDiv.value;
+        editor.filesView.update();
     }
 }
 
 
 clickSelectForRuntime = function () {
     editorRuntimeFile = editorSelectedFile;
-    editorFiles.update();
+    editor.filesView.update();
 
 }
 
@@ -255,6 +255,6 @@ inputFuncName = function() {
 
 
 
-    funcName = editorFiles.funcDiv.value;
-    editorFiles.update();
+    funcName = this.editor.filesView.funcDiv.value;
+    editor.filesView.update();
 }

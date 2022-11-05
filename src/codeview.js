@@ -20,7 +20,7 @@ const CodeView = function(editor)
 
         if (editorSelectedFile>=0)
             //editorFilesData[editorSelectedFile].text = text;
-            editorFileSystem.getFile(editorSelectedFile).text = text;
+            this.editor.fileSystem.getFile(editorSelectedFile).text = text;
     });
 
     

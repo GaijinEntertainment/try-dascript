@@ -1,16 +1,17 @@
 
-const Editor = function()
-{
-    
+
+class Editor {
+
+    constructor()
+    {
+        this.fileSystem = new FileSystem();
+        this.codeView = new CodeView(this);
+        this.filesView = new FilesView(this);
+        this.outputView = new OutputView(this);
+    }
 }
 
-
-
-var editorFileSystem;
-var editorCode; 
-var editorOutput;
-var editorFiles;
-
+var editor;
 
 
 
@@ -96,10 +97,7 @@ pageInit = function () {
 
     //$.getScript("daScript.js"
         
-    editorFileSystem = new FileSystem(null);
-    editorCode = new CodeView(null);
-    editorOutput = new OutputView(null);
-    editorFiles = new FilesView(null);
+    editor = new Editor();
 
 
 
@@ -333,11 +331,11 @@ loadSample = function(type,index,updateEnv,onComplete)
         if (updateEnv)
         {
             //editorFilesData = filesData;
-            editorFileSystem = fileSystem;
+            editor.fileSystem = fileSystem;
             editorSelectedFile = 0;
             editorRuntimeFile = 0;
             funcName = samplesData[type][index]["func"];
-            editorFiles.update();
+            editor.filesView.update();
 
         }
 
@@ -380,11 +378,11 @@ clickRunCode = function() {
     //[{"name":"main.das","text":code.getValue()}]
     console.log(fName);
 
-    runScript(editorFileSystem,
+    runScript(editor.fileSystem,
         //editorFilesData[editorRuntimeFile].path+editorFilesData[editorRuntimeFile].name,
-        editorFileSystem.getFile(editorRuntimeFile).path+editorFileSystem.getFile(editorRuntimeFile).name,
+        editor.fileSystem.getFile(editorRuntimeFile).path+editor.fileSystem.getFile(editorRuntimeFile).name,
         fName,fName === "test" ? function () {
-            editorOutput.print( "TEST FINISHED" ,"#4adbdb");
+            editor.outputView.print( "TEST FINISHED" ,"#4adbdb");
 
 
     } : null);
@@ -407,7 +405,7 @@ runTest = function(i) {
 
     loadSample('tests',i,false,function(fileSystem) {
 
-        editorOutput.print("Running Test "+(i+1)+"/"+samplesData["tests"].length+": "+samplesData["tests"][i].name,"#bec7b6");
+        editor.outputView.print("Running Test "+(i+1)+"/"+samplesData["tests"].length+": "+samplesData["tests"][i].name,"#bec7b6");
 
         outputPool = [];
 
@@ -452,7 +450,7 @@ runTest = function(i) {
                     ok = false;
 
 
-            editorOutput.print(samplesData["tests"][i].name+" Test "+(i+1)+"/"+samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "#89db4a": '#ff9393');
+            editor.outputView.print(samplesData["tests"][i].name+" Test "+(i+1)+"/"+samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "#89db4a": '#ff9393');
 
             if (i<samplesData["tests"].length-1)
                 runTest(i+1);
@@ -526,7 +524,7 @@ var Module = {
                 if (arguments.length > 1)
                     text = Array.prototype.slice.call(arguments).join(' ');
                 console.log(text);
-                editorOutput.print(text,'#ffffff');
+                editor.outputView.print(text,'#ffffff');
 
                 outputPool.push(text);
             };
@@ -536,9 +534,9 @@ var Module = {
 window.onerror = function(message)
 {
 
-    editorOutput.print(message,'#ff2d2d');
+    editor.outputView.print(message,'#ff2d2d');
 
-    editorOutput.print("An error occurred, you may need to reload the page",'#ff9393');
+    editor.outputView.print("An error occurred, you may need to reload the page",'#ff9393');
 }
 
 window.onresize = function() 
