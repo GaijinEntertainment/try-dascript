@@ -18,7 +18,7 @@
 
 
 
-<body onload="pageInit()">
+<body>
 
 
 <script type="text/javascript" src="./src/jquery-3.6.0.min.js"></script>
@@ -67,7 +67,7 @@
             <div class="main_header_part">
 
                 <label for="examples"></label>
-                <select name="examples" id="examples" class="select_header" onchange="editor.selectSample('examples')">
+                <select name="examples" id="select_examples" class="select_header">
                     <option value="init">Select example</option>
                 </select>
             </div>
@@ -76,14 +76,14 @@
             <div class="main_header_part">
 
                 <label for="tests"></label>
-                <select name="tests" id="tests" class="select_header" onchange="editor.selectSample('tests')">
+                <select name="tests" id="select_tests" class="select_header">
                     <option value="init">Select test</option>
                 </select>
             </div>
 
             <div class="main_header_part">
 
-                <button class="button_header" onclick="editor.runTests()">Run all tests</button>
+                <button id="run_tests" class="button_header">Run all tests</button>
             </div>
 
         </div>
@@ -110,7 +110,7 @@
             </div>
 
             <div class="main_header_part">
-                <button class="button_header" onclick="editor.clickRunCode()">Run</button>
+                <button id="run_code" class="button_header">Run</button>
             </div>
 
 
@@ -134,29 +134,29 @@
             <div class="main_options_header">File Browser</div>
             
                 <div>
-                    <button class="button_options" onclick="clickNewFile()">New File</button>
-                    <button class="button_options" onclick="clickLoadFile(event)">Load File</button>
-                    <button class="button_options" onclick="clickRemoveFile()">Remove</button>
+                    <button id="new_file" class="button_options">New File</button>
+                    <button id="load_file" class="button_options">Load File</button>
+                    <button id="remove_file" class="button_options">Remove</button>
                 </div>
                 
                 <div>
                     <label for="file_path_input">Path:</label>
-                    <input name="file_path_value" id="file_path_input" class="input_options" oninput="inputPathValue()" style="width:200px">
+                    <input name="file_path_value" id="file_path_input" class="input_options" style="width:200px">
                 </div>
         
                 <div>
                     <label for="file_name_input">File:</label>
-                    <input name="file_name_value" id="file_name_input" class="input_options" oninput="inputNameValue()" style="width:200px">
+                    <input name="file_name_value" id="file_name_input" class="input_options" style="width:200px">
                 </div>
             
 
             
                 <div>
-                    <button class="button_options" id="runtime_button" onclick="clickSelectForRuntime()">Select File For Runtime</button>
+                    <button class="button_options" id="select_runtime">Select File For Runtime</button>
                 </div>
                 <div>
                     <label for="func_name">Function:</label>
-                    <input name="func_name" id="func_name" class="input_options" oninput="inputFuncName()"  style="width:60px">
+                    <input name="func_name" id="func_name" class="input_options" style="width:60px">
                 </div>
             
 
@@ -219,7 +219,7 @@
                 <div class="main_options_header">Output</div>
 
 
-                <button class="button_options" onclick="clickClearOutput()">Clear</button>
+                <button id="clear_output" class="button_options">Clear</button>
 
             </div>
             

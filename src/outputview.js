@@ -8,6 +8,11 @@ const OutputView = function(editor)
 
 
 
+    document.getElementById("clear_output").addEventListener("click",function(){
+
+        this.clear();
+    }.bind(this))
+
     this.clear = function() 
     {
             
@@ -53,8 +58,3 @@ const OutputView = function(editor)
 }
 
 
-clickClearOutput = function() {
-
-
-    editor.outputView.clear();
-}

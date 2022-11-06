@@ -10,13 +10,44 @@ const FilesView = function(editor)
     this.filePathInputDiv = document.getElementById("file_path_input");
     this.fileNameInputDiv = document.getElementById("file_name_input");
     this.funcDiv = document.getElementById("func_name");
-    this.runtimeButton = document.getElementById("runtime_button");
+    this.runtimeButton = document.getElementById("select_runtime");
 
     
     this.fileGroupDiv = [];
     this.filePathDiv = [];
     this.fileNameDiv = [];
 
+
+    document.getElementById("new_file").addEventListener("click",function()
+    {
+        this.newFile();
+    }.bind(this));
+
+    document.getElementById("load_file").addEventListener("click",function(ev){
+        this.loadFile(ev);
+    }.bind(this))
+
+    document.getElementById("remove_file").addEventListener("click",function(){
+
+        this.removeFile();
+    }.bind(this));
+
+    document.getElementById("file_path_input").addEventListener("input",function(){
+        this.inputPathValue(); 
+    }.bind(this));
+
+    document.getElementById("file_name_input").addEventListener("input",function(){
+        this.inputNameValue(); 
+    }.bind(this));
+    
+    this.runtimeButton.addEventListener("click",function() {
+        this.selectForRuntime();
+    }.bind(this));
+
+    
+    document.getElementById("func_name").addEventListener("input",function(){
+        this.inputFuncName(); 
+    }.bind(this));
 
     this.update = function() 
     {
@@ -25,7 +56,6 @@ const FilesView = function(editor)
 
 
 
-        console.log(filesTraversal)
 
         for (let i=0;i<Math.max(filesTraversal.length,this.fileGroupDiv.length);i++)
         {
@@ -63,7 +93,7 @@ const FilesView = function(editor)
                                             
                         this.editor.selectedFile = event.target.selectFileIndex;
 
-                        this.editor.filesView.update();
+                        this.update();
                     }.bind(this),false);
 
                     this.fileNameDiv[i].selectFileIndex = this.filePathDiv[i].selectFileIndex = this.fileGroupDiv[i].selectFileIndex = -1;
@@ -144,114 +174,113 @@ const FilesView = function(editor)
 
 
     }
-}
 
-clickNewFile = function()
-{
+    this.newFile = function() 
+    {
+        this.editor.fileSystem.newFile();
 
-    editor.fileSystem.newFile();
+        this.update();
+    }
 
-    editor.filesView.update();
-}
+    this.loadFile = function(el)
+    {
+        var el = window._protected_reference = document.createElement("INPUT");
+        el.type = "file";
+        el.multiple = "multiple"
+        el.addEventListener('change', function(ev2) {
+            if (el.files.length) {
+                    //document.getElementById('out').src = URL.createObjectURL(el.files[0]);
+    
+    
+    
+    
+                    for (let i=0;i<el.files.length;i++)
+                    {
+                        let fr = new FileReader();
+                        fr.readAsText(el.files[i]);
+                        fr.onload = function () {
+    
+                            this.editor.fileSystem.addFile({
+                                "path":"",
+                                "name":el.files[i].name,
+                                "text":fr.result
+                            });
+                            this.update();
+                        }.bind(this);
+                    }
+    
+    
+    
+            }
+    
+    
+            new Promise(function(resolve) {
+                    setTimeout(function() { resolve(); }, 1000);
+                })
+                    .then(function() {
+    
+                        el = window._protected_reference = undefined;
+                    });
+    
+            }.bind(this));
+    
+        el.click();
+    }
 
-clickLoadFile = function(ev)
-{
-
-    var el = window._protected_reference = document.createElement("INPUT");
-    el.type = "file";
-    el.multiple = "multiple"
-    el.addEventListener('change', function(ev2) {
-        if (el.files.length) {
-                //document.getElementById('out').src = URL.createObjectURL(el.files[0]);
-
-
-                console.log(el.files);
-
-
-                for (let i=0;i<el.files.length;i++)
-                {
-                    let fr = new FileReader();
-                    fr.readAsText(el.files[i]);
-                    fr.onload = function () {
-
-                        editor.fileSystem.addFile({
-                            "path":"",
-                            "name":el.files[i].name,
-                            "text":fr.result
-                        });
-                        editor.filesView.update();
-                    };
-                }
-
-
-
+    this.removeFile = function()
+    {
+        if (this.editor.selectedFile>=0)
+        {
+            if (this.editor.selectedFile===this.editor.runtimeFile)
+            this.editor.runtimeFile = -1;
+    
+            this.editor.fileSystem.removeFile(this.editor.selectedFile);
+    
+            if (this.editor.selectedFile>=this.editor.fileSystem.getFiles().length)
+            this.editor.selectedFile = this.editor.fileSystem.getFiles().length-1;
+    
+    
+            this.update();
         }
-
-
-        new Promise(function(resolve) {
-                setTimeout(function() { console.log(el.files); resolve(); }, 1000);
-            })
-                .then(function() {
-
-                    el = window._protected_reference = undefined;
-                });
-
-        });
-
-    el.click();
-
-}
-
-clickRemoveFile = function()
-{
-
-    if (editor.selectedFile>=0)
-    {
-        if (editor.selectedFile===editor.runtimeFile)
-        editor.runtimeFile = -1;
-
-        editor.fileSystem.removeFile(editor.selectedFile);
-
-        if (editor.selectedFile>=editor.fileSystem.getFiles().length)
-            editor.selectedFile = editor.fileSystem.getFiles().length-1;
-
-
-            editor.filesView.update();
     }
 
-}
+    
+    this.inputPathValue = function() {
 
 
-inputPathValue = function() {
-
-
-    if (editor.selectedFile!==-1)
-    {
-        editor.fileSystem.getFile(editor.selectedFile).path = editor.filesView.filePathInputDiv.value;
-        editor.filesView.update();
+        if (this.editor.selectedFile!==-1)
+        {
+            this.editor.fileSystem.getFile(this.editor.selectedFile).path = this.filePathInputDiv.value;
+            this.update();
+        }
     }
-}
 
-inputNameValue = function() {
-    if (editor.selectedFile!==-1)
-    {
-        editor.fileSystem.getFile(editor.selectedFile).name = editor.filesView.fileNameInputDiv.value;
-        editor.filesView.update();
+    this.inputNameValue = function() {
+        if (editor.selectedFile!==-1)
+        {
+            this.editor.fileSystem.getFile(this.editor.selectedFile).name = this.fileNameInputDiv.value;
+            this.update();
+        }
+    }
+
+    this.selectForRuntime = function () {
+        this.editor.runtimeFile = this.editor.selectedFile;
+        this.update();
+    
+    }
+    
+    this.inputFuncName = function() {
+
+
+        this.editor.funcName = this.funcDiv.value;
+        this.update();
     }
 }
 
 
-clickSelectForRuntime = function () {
-    editor.runtimeFile = editor.selectedFile;
-    editor.filesView.update();
-
-}
-
-
-inputFuncName = function() {
 
 
 
-    editor.funcName = editor.filesView.funcDiv.value;
-    editor.filesView.update();
-}
+
+
+

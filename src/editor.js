@@ -56,10 +56,12 @@ class Editor {
 
         this.samplesData;
 
-        this.sampleList = {"examples":null, "tests":null};
+        this.sampleListDiv =
+         {
+            "examples":document.getElementById("select_examples"), 
+            "tests":document.getElementById("select_tests")
+        };
 
-        this.sampleList["examples"] = document.getElementById("examples");
-        this.sampleList["tests"] = document.getElementById("tests");
     
     
 
@@ -107,7 +109,7 @@ class Editor {
     
             ["example","test"].forEach(function (n) {
     
-                let ll = document.getElementById(n+"s");
+                let ll = this.sampleListDiv[n+"s"];
                 while (ll.firstChild) {
                     ll.removeChild(ll.lastChild);
                 }
@@ -140,22 +142,42 @@ class Editor {
     
         this.outputPool = [];
 
+        this.sampleListDiv["examples"].addEventListener("change",
+            function() {
+                this.selectSample('examples')
+            }.bind(this)
+        );
 
-        window.addEventListener("mousemove",function(e){
+
+        this.sampleListDiv["tests"].addEventListener("change",
+            function() {
+                this.selectSample('tests')
+            }.bind(this)
+        );
+
+        document.getElementById("run_tests").addEventListener("click",
+            function() {
+                this.runTests();
+            }.bind(this))
+
+
+        document.getElementById("run_code").addEventListener("click",
+            function() {
+                this.clickRunCode()
+            }.bind(this))
+
+        document.addEventListener("mousemove",function(e){
             if (this.selectedSeparator!==-1)
                 this.setMainColPos(e);
-    
         }.bind(this));
     
-        window.addEventListener("mouseup", function(e){
+        document.addEventListener("mouseup", function(e){
             this.selectedSeparator = -1;
         }.bind(this));
 
         window.addEventListener("onerror", function(message)
         {
-        
             this.outputView.print(message,'#ff2d2d');
-        
             this.outputView.print("An error occurred, you may need to reload the page",'#ff9393');
         }.bind(this));
         
@@ -340,7 +362,7 @@ class Editor {
 
 
 
-        let vv = id !== undefined ? id : parseInt(this.sampleList[type].value);
+        let vv = id !== undefined ? id : parseInt(this.sampleListDiv[type].value);
         if (vv !== NaN)
         {
 
@@ -351,7 +373,7 @@ class Editor {
 
         }
 
-        this.sampleList[type].value = "init";
+        this.sampleListDiv[type].value = "init";
 
 
     }

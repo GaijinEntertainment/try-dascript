@@ -3,11 +3,14 @@ var editor;
 var runtimeLoaded = false;
 
 
-pageInit = function () {
-        
+
+window.addEventListener("load",function() {
+
     editor = new Editor();
 
-}
+}.bind(this))
+
+
 
 var Module = {
         noInitialRun : [],

@@ -102,7 +102,6 @@ const FileSystem = function(controller)
         currentDir.push({'name':this.files[i].name,'type':'file','index':i})
         }
 
-        console.log(entities);
 
         let filesTraversal = [];
 
