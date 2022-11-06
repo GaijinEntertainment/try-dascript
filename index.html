@@ -28,6 +28,8 @@
 <script type="text/javascript" src="./src/codeview.js"></script>
 <script type="text/javascript" src="./src/outputview.js"></script>
 
+<script type="text/javascript" src="./src/editor.js"></script>
+
 <script type="text/javascript" src="./src/filesystem.js"></script>
 <script type="text/javascript" src="./src/main.js"></script>
 <script type="text/javascript" src="./daScript.js"></script>
@@ -65,7 +67,7 @@
             <div class="main_header_part">
 
                 <label for="examples"></label>
-                <select name="examples" id="examples" class="select_header" onchange="selectSample('examples')">
+                <select name="examples" id="examples" class="select_header" onchange="editor.selectSample('examples')">
                     <option value="init">Select example</option>
                 </select>
             </div>
@@ -74,14 +76,14 @@
             <div class="main_header_part">
 
                 <label for="tests"></label>
-                <select name="tests" id="tests" class="select_header" onchange="selectSample('tests')">
+                <select name="tests" id="tests" class="select_header" onchange="editor.selectSample('tests')">
                     <option value="init">Select test</option>
                 </select>
             </div>
 
             <div class="main_header_part">
 
-                <button class="button_header" onclick="runTests()">Run all tests</button>
+                <button class="button_header" onclick="editor.runTests()">Run all tests</button>
             </div>
 
         </div>
@@ -108,7 +110,7 @@
             </div>
 
             <div class="main_header_part">
-                <button class="button_header" onclick="clickRunCode()">Run</button>
+                <button class="button_header" onclick="editor.clickRunCode()">Run</button>
             </div>
 
 

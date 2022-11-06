@@ -18,10 +18,10 @@ const CodeView = function(editor)
     this.code.on('change', function(c){
         let text = c.doc.getValue()
 
-        if (editorSelectedFile>=0)
-            //editorFilesData[editorSelectedFile].text = text;
-            this.editor.fileSystem.getFile(editorSelectedFile).text = text;
-    });
+        if (this.editor.selectedFile>=0)
+        
+            this.editor.fileSystem.getFile(this.editor.selectedFile).text = text;
+    }.bind(this));
 
     
 
