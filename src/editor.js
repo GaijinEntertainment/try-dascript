@@ -1,8 +1,10 @@
 
 class Editor {
 
-    constructor()
+    constructor(runtimeController)
     {
+        this.runtimeController = runtimeController;
+
         this.fileSystem = new FileSystem();
         this.fileView = new FileView(this);
         this.browserView = new BrowserView(this);
@@ -187,6 +189,21 @@ class Editor {
         }.bind(this));
         
 
+        this.runtimeController.onPrint = function(text){
+            
+
+            this.outputView.print(text,'#ffffff');
+
+            this.outputPool.push(text);
+
+        }.bind(this);
+
+
+        this.runtimeController.onInit = function() {
+            
+            this.setPageStatus("Runtime Ready","#000000")
+        }.bind(this);
+
     }
 
 
@@ -324,7 +341,7 @@ class Editor {
     loadSample(type,index,updateEnv,onComplete)
     {
 
-        if (runtimeLoaded)
+        if (this.runtimeController.loaded)
             this.setPageStatus("Loading files","#ff0000")
 
 
@@ -347,7 +364,7 @@ class Editor {
             }
 
 
-            if (runtimeLoaded)
+            if (this.runtimeController.loaded)
                 this.setPageStatus("Ready","#000000")
 
             if (onComplete)
@@ -382,15 +399,12 @@ class Editor {
 
         let fName = this.funcName;
     
-    
-    
-        this.runScript(this.fileSystem,
-            
-            this.fileSystem.getFile(this.runtimeFile).path+this.fileSystem.getFile(this.runtimeFile).name,
+
+        this.runtimeController.setFS(this.fileSystem);
+
+        this.runtimeController.run(this.fileSystem.getFile(this.runtimeFile).path+this.fileSystem.getFile(this.runtimeFile).name,
             fName,fName === "test" ? function () {
                 this.outputView.print( "TEST FINISHED" ,"#4adbdb");
-    
-    
         }.bind(this) : null);
     
     
@@ -408,7 +422,11 @@ class Editor {
     
             //fName = this.samplesData["tests"][i].function_name ? this.samplesData["tests"][i].function_name : "main";
     
-            this.runScript(fileSystem,fileSystem.getFile(0).path+fileSystem.getFile(0).name,this.samplesData["tests"][i]["func"],function () {
+
+
+            this.runtimeController.setFS(fileSystem);
+
+            this.runtimeController.run(fileSystem.getFile(0).path+fileSystem.getFile(0).name,this.samplesData["tests"][i]["func"],function () {
     
     
                 let ok = true;
@@ -461,50 +479,6 @@ class Editor {
         this.runTest(0);
 
     }
-
-    runScript(tempFileSystem,mainFile,mainFunc,onComplete)
-    {
-
-
-        let files = tempFileSystem.getFiles();
-
-
-        //let mainPath = "";
-
-        for (let i=0;i<files.length;i++)
-        {
-
-
-            if (files[i].path !== "")
-            {
-
-                let folders = files[i].path.split("/");
-                let paths = [folders[0]+"/"];
-                for (let j=1;j<folders.length;j++)
-                    paths.push(paths[j-1] + folders[j]+"/")
-
-                for (let j=0;j<paths.length;j++)
-
-                    if (!FS.analyzePath(paths[j]).exists)
-                        FS.mkdir(paths[j]);
-            }
-
-            FS.writeFile(files[i].path+files[i].name, files[i].text);
-
-            //if (files[i].name === "main.das")
-            //    mainPath = files[i].path;
-
-        }
-
-        callMain([mainFile,"-main",mainFunc]);
-
-
-
-
-        if (onComplete)
-            onComplete();
-    }
-
 
 
 
