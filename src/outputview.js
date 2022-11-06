@@ -1,19 +1,24 @@
 
-const OutputView = function(editor)
+class OutputView
 {
-    this.editor = editor;
+
+    constructor(editor)
+    {
+        this.editor = editor;
 
 
-    this.outputDiv = document.getElementById("output");
+        this.outputDiv = document.getElementById("output");
+    
+    
+    
+        document.getElementById("clear_output").addEventListener("click",function(){
+    
+            this.clear();
+        }.bind(this))
+    }
+  
 
-
-
-    document.getElementById("clear_output").addEventListener("click",function(){
-
-        this.clear();
-    }.bind(this))
-
-    this.clear = function() 
+    clear() 
     {
             
         while (this.outputDiv.firstChild) {
@@ -22,7 +27,7 @@ const OutputView = function(editor)
     }
 
 
-    this.print = function(text,color) {
+    print(text,color) {
     
         var currentdate = new Date();
     

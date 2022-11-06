@@ -1,55 +1,59 @@
 
 
-const FilesView = function(editor)
+class FilesView
 {
-    this.editor = editor;
-
-
-    this.filesDiv = document.getElementById("file_browser");
-
-    this.filePathInputDiv = document.getElementById("file_path_input");
-    this.fileNameInputDiv = document.getElementById("file_name_input");
-    this.funcDiv = document.getElementById("func_name");
-    this.runtimeButton = document.getElementById("select_runtime");
-
     
-    this.fileGroupDiv = [];
-    this.filePathDiv = [];
-    this.fileNameDiv = [];
-
-
-    document.getElementById("new_file").addEventListener("click",function()
+    constructor(editor)
     {
-        this.newFile();
-    }.bind(this));
+        this.editor = editor;
 
-    document.getElementById("load_file").addEventListener("click",function(ev){
-        this.loadFile(ev);
-    }.bind(this))
 
-    document.getElementById("remove_file").addEventListener("click",function(){
+        this.filesDiv = document.getElementById("file_browser");
 
-        this.removeFile();
-    }.bind(this));
+        this.filePathInputDiv = document.getElementById("file_path_input");
+        this.fileNameInputDiv = document.getElementById("file_name_input");
+        this.funcDiv = document.getElementById("func_name");
+        this.runtimeButton = document.getElementById("select_runtime");
 
-    document.getElementById("file_path_input").addEventListener("input",function(){
-        this.inputPathValue(); 
-    }.bind(this));
+        
+        this.fileGroupDiv = [];
+        this.filePathDiv = [];
+        this.fileNameDiv = [];
 
-    document.getElementById("file_name_input").addEventListener("input",function(){
-        this.inputNameValue(); 
-    }.bind(this));
-    
-    this.runtimeButton.addEventListener("click",function() {
-        this.selectForRuntime();
-    }.bind(this));
 
-    
-    document.getElementById("func_name").addEventListener("input",function(){
-        this.inputFuncName(); 
-    }.bind(this));
+        document.getElementById("new_file").addEventListener("click",function()
+        {
+            this.newFile();
+        }.bind(this));
 
-    this.update = function() 
+        document.getElementById("load_file").addEventListener("click",function(ev){
+            this.loadFile(ev);
+        }.bind(this))
+
+        document.getElementById("remove_file").addEventListener("click",function(){
+
+            this.removeFile();
+        }.bind(this));
+
+        document.getElementById("file_path_input").addEventListener("input",function(){
+            this.inputPathValue(); 
+        }.bind(this));
+
+        document.getElementById("file_name_input").addEventListener("input",function(){
+            this.inputNameValue(); 
+        }.bind(this));
+        
+        this.runtimeButton.addEventListener("click",function() {
+            this.selectForRuntime();
+        }.bind(this));
+
+        
+        document.getElementById("func_name").addEventListener("input",function(){
+            this.inputFuncName(); 
+        }.bind(this));
+    }
+
+    update() 
     {
         
         let filesTraversal = this.editor.fileSystem.getTreeView();
@@ -175,14 +179,14 @@ const FilesView = function(editor)
 
     }
 
-    this.newFile = function() 
+    newFile() 
     {
         this.editor.fileSystem.newFile();
 
         this.update();
     }
 
-    this.loadFile = function(el)
+    loadFile(el)
     {
         var el = window._protected_reference = document.createElement("INPUT");
         el.type = "file";
@@ -227,7 +231,7 @@ const FilesView = function(editor)
         el.click();
     }
 
-    this.removeFile = function()
+    removeFile()
     {
         if (this.editor.selectedFile>=0)
         {
@@ -245,7 +249,7 @@ const FilesView = function(editor)
     }
 
     
-    this.inputPathValue = function() {
+    inputPathValue() {
 
 
         if (this.editor.selectedFile!==-1)
@@ -255,7 +259,7 @@ const FilesView = function(editor)
         }
     }
 
-    this.inputNameValue = function() {
+    inputNameValue() {
         if (editor.selectedFile!==-1)
         {
             this.editor.fileSystem.getFile(this.editor.selectedFile).name = this.fileNameInputDiv.value;
@@ -263,13 +267,13 @@ const FilesView = function(editor)
         }
     }
 
-    this.selectForRuntime = function () {
+    selectForRuntime() {
         this.editor.runtimeFile = this.editor.selectedFile;
         this.update();
     
     }
     
-    this.inputFuncName = function() {
+    inputFuncName() {
 
 
         this.editor.funcName = this.funcDiv.value;

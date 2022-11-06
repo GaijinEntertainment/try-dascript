@@ -1,32 +1,35 @@
 
 
-const FileSystem = function(controller)
+class FileSystem
 {
 
 
-
-    this.controller = controller;
-
-    this.files = [];
+    constructor()
+    {
 
 
+        this.files = [];
+    
+    }
 
-    this.getFile = function(i)
+
+
+    getFile(i)
     {
         return this.files[i];
     }
 
-    this.getFiles = function()
+    getFiles()
     {
         return this.files;
     }
 
-    this.setFiles = function(arr)
+    setFiles(arr)
     {
         this.files = arr;
     }
 
-    this.newFile = function()
+    newFile()
     {
         
         let newN = 0;
@@ -55,17 +58,17 @@ const FileSystem = function(controller)
         });
     }
 
-    this.addFile = function(fileDescription)
+    addFile(fileDescription)
     {
         this.files.push(fileDescription);
     }
 
-    this.removeFile = function(i)
+    removeFile(i)
     {
         this.files.splice(i, 1);
     }
 
-    this.getTreeView = function() 
+    getTreeView() 
     {
         
         let entities = [];
