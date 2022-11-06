@@ -4,8 +4,8 @@ class Editor {
     constructor()
     {
         this.fileSystem = new FileSystem();
-        this.codeView = new CodeView(this);
-        this.filesView = new FilesView(this);
+        this.fileView = new FileView(this);
+        this.browserView = new BrowserView(this);
         this.outputView = new OutputView(this);
 
 
@@ -342,7 +342,7 @@ class Editor {
                 this.selectedFile = 0;
                 this.runtimeFile = 0;
                 this.funcName = this.samplesData[type][index]["func"];
-                this.filesView.update();
+                this.browserView.update();
 
             }
 
