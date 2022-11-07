@@ -7,6 +7,7 @@ class FileView
         this.editor = editor;
 
     
+        this.file = null;
     
 
         this.codeDiv = document.getElementById("code");
@@ -21,20 +22,35 @@ class FileView
         this.code.on('change', function(c){
             let text = c.doc.getValue()
     
-            if (this.editor.selectedFile>=0)
+            if (this.file)
     
-                this.editor.fileSystem.getFile(this.editor.selectedFile).text = text;
+            this.file.text = text;
         }.bind(this));
     
     }
    
     
 
-    setCode(name, txt)
+    view(file)
     {
-        this.fileCaptionDiv.innerText = name;
 
-        this.code.setValue(txt);
+        this.file = file;
+
+
+        if (this.file)
+        {
+
+            this.fileCaptionDiv.innerText = file.name;
+
+            this.code.setValue(file.text);
+        }
+        else
+        {
+
+            this.fileCaptionDiv.innerText = "";
+
+            this.code.setValue("");
+        }
     }
 
 }

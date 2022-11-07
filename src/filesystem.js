@@ -9,14 +9,33 @@ class FileSystem
 
 
         this.files = [];
+
+
+        this.selector = {};
     
     }
 
-
-
-    getFile(i)
+    addSelector(name)
     {
-        return this.files[i];
+        this.selector[name] = 0;
+    }
+
+    setSelector(name,file)
+    {
+        this.selector[name] = null;
+        if (file)
+            for (let i=0;i<this.files.length;i++)
+                if (this.files[i]===file)
+                {
+
+                    this.selector[name] = i;
+                    return;
+                }
+    }
+
+    getFile(selectorName)
+    {
+        return this.files[this.selector[selectorName]];
     }
 
     getFiles()
@@ -63,9 +82,13 @@ class FileSystem
         this.files.push(fileDescription);
     }
 
-    removeFile(i)
+    removeFile(selectorName)
     {
-        this.files.splice(i, 1);
+        this.files.splice(this.selector[selectorName], 1);
+
+        
+        if (this.selector[selectorName]>=this.files.length)
+            this.selector[selectorName] = this.files.length-1;
     }
 
     getTreeView() 
@@ -102,7 +125,7 @@ class FileSystem
                 currentDir = found;
             }
         
-        currentDir.push({'name':this.files[i].name,'type':'file','index':i})
+        currentDir.push({'name':this.files[i].name,'type':'file','file':this.files[i]})
         }
 
 
@@ -118,7 +141,7 @@ class FileSystem
                 }
                 else if (f[i].type=='file')
                 {
-                    filesTraversal.push({'name':f[i].name,'type':'file','depth':depth,'index':f[i].index})
+                    filesTraversal.push({'name':f[i].name,'type':'file','depth':depth,'file':f[i].file})
                 }
         }
         traverse(entities,0);

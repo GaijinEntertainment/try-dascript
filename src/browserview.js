@@ -95,12 +95,12 @@ class BrowserView
                     this.fileGroupDiv[i].addEventListener('click',function(event)
                     {
                                             
-                        this.editor.selectedFile = event.target.selectFileIndex;
+                        this.editor.fileSystem.setSelector("browser",event.target._fileData);
 
                         this.update();
                     }.bind(this),false);
 
-                    this.fileNameDiv[i].selectFileIndex = this.filePathDiv[i].selectFileIndex = this.fileGroupDiv[i].selectFileIndex = -1;
+                    this.fileNameDiv[i]._fileData = this.filePathDiv[i]._fileData = this.fileGroupDiv[i]._fileData = null;
                 }
 
 
@@ -116,20 +116,20 @@ class BrowserView
                     this.fileGroupDiv[i].style.backgroundColor = "#FFFFFF";
                     this.fileGroupDiv[i].style.fontWeight = "normal";
 
-                    this.fileNameDiv[i].selectFileIndex = this.filePathDiv[i].selectFileIndex = this.fileGroupDiv[i].selectFileIndex = -1;
+                    this.fileNameDiv[i]._fileData = this.filePathDiv[i]._fileData = this.fileGroupDiv[i]._fileData = null;
 
         
                 }
                 else if (filesTraversal[i].type==='file')
                 {
                     
-                    this.fileNameDiv[i].selectFileIndex = this.filePathDiv[i].selectFileIndex = this.fileGroupDiv[i].selectFileIndex = filesTraversal[i].index;
+                    this.fileNameDiv[i]._fileData = this.filePathDiv[i]._fileData = this.fileGroupDiv[i]._fileData = filesTraversal[i].file;
 
                     this.filePathDiv[i].innerHTML = "";
                     this.fileNameDiv[i].innerHTML = pre+filesTraversal[i].name;
 
-                    this.fileGroupDiv[i].style.backgroundColor = filesTraversal[i].index===this.editor.selectedFile ? "#e1e4f3" : "#FFFFFF";
-                    this.fileGroupDiv[i].style.fontWeight = filesTraversal[i].index===this.editor.runtimeFile ? "bold" : "normal";
+                    this.fileGroupDiv[i].style.backgroundColor = filesTraversal[i].file===this.editor.fileSystem.getFile("browser") ? "#e1e4f3" : "#FFFFFF";
+                    this.fileGroupDiv[i].style.fontWeight = filesTraversal[i].file===this.editor.fileSystem.getFile("runtime") ? "bold" : "normal";
                 }
 
                 //
@@ -141,11 +141,11 @@ class BrowserView
 
         }
         
-        if (this.editor.selectedFile===-1)
+        if (!this.editor.fileSystem.getFile("browser"))
         {
 
 
-            this.editor.fileView.setCode("", "");
+            this.editor.fileView.view(null);
             
             this.filePathInputDiv.value = "";
 
@@ -158,14 +158,14 @@ class BrowserView
 
             
 
-            this.runtimeButton.disabled = this.editor.selectedFile === this.editor.runtimeFile;
+            this.runtimeButton.disabled = this.editor.fileSystem.getFile("browser") === this.editor.fileSystem.getFile("runtime");
 
 
-            this.editor.fileView.setCode(this.editor.fileSystem.getFile(this.editor.selectedFile).name, this.editor.fileSystem.getFile(this.editor.selectedFile).text);
+            this.editor.fileView.view(this.editor.fileSystem.getFile("browser"));
             
-            this.filePathInputDiv.value = this.editor.fileSystem.getFile(this.editor.selectedFile).path;
+            this.filePathInputDiv.value = this.editor.fileSystem.getFile("browser").path;
             
-            this.fileNameInputDiv.value = this.editor.fileSystem.getFile(this.editor.selectedFile).name;
+            this.fileNameInputDiv.value = this.editor.fileSystem.getFile("browser").name;
 
 
         }
@@ -233,16 +233,12 @@ class BrowserView
 
     removeFile()
     {
-        if (this.editor.selectedFile>=0)
+        if (this.editor.fileSystem.getFile("browser"))
         {
-            if (this.editor.selectedFile===this.editor.runtimeFile)
-            this.editor.runtimeFile = -1;
+            if (this.editor.fileSystem.getFile("browser")===this.editor.fileSystem.getFile("runtime"))
+                this.editor.fileSystem.setSelector("runtime",null);
     
-            this.editor.fileSystem.removeFile(this.editor.selectedFile);
-    
-            if (this.editor.selectedFile>=this.editor.fileSystem.getFiles().length)
-            this.editor.selectedFile = this.editor.fileSystem.getFiles().length-1;
-    
+            this.editor.fileSystem.removeFile("browser");
     
             this.update();
         }
@@ -252,23 +248,23 @@ class BrowserView
     inputPathValue() {
 
 
-        if (this.editor.selectedFile!==-1)
+        if (this.editor.fileSystem.getFile("browser"))
         {
-            this.editor.fileSystem.getFile(this.editor.selectedFile).path = this.filePathInputDiv.value;
+            this.editor.fileSystem.getFile("browser").path = this.filePathInputDiv.value;
             this.update();
         }
     }
 
     inputNameValue() {
-        if (editor.selectedFile!==-1)
+        if (this.editor.fileSystem.getFile("browser"))
         {
-            this.editor.fileSystem.getFile(this.editor.selectedFile).name = this.fileNameInputDiv.value;
+            this.editor.fileSystem.getFile("browser").name = this.fileNameInputDiv.value;
             this.update();
         }
     }
 
     selectForRuntime() {
-        this.editor.runtimeFile = this.editor.selectedFile;
+        this.editor.fileSystem.setSelector("runtime",this.editor.fileSystem.getFile("browser"))
         this.update();
     
     }

@@ -25,10 +25,7 @@ class Editor {
 
         for (let i=0;i<this.mainColumnNum;i++)
         {
-    
-    
             let mc = document.getElementById("main_col"+(i+1));
-    
             this.mainColumnDiv.push(mc);
         }
     
@@ -67,8 +64,8 @@ class Editor {
     
     
 
-        this.selectedFile = -1;
-        this.runtimeFile = -1;
+        //this.selectedFile = -1;
+        //this.runtimeFile = -1;
         this.funcName = "main";
 
 
@@ -165,7 +162,7 @@ class Editor {
 
         document.getElementById("run_code").addEventListener("click",
             function() {
-                this.clickRunCode()
+                this.runCode()
             }.bind(this))
 
         document.addEventListener("mousemove",function(e){
@@ -356,8 +353,8 @@ class Editor {
             {
                 //editorFilesData = filesData;
                 this.fileSystem = fileSystem;
-                this.selectedFile = 0;
-                this.runtimeFile = 0;
+                this.fileSystem.addSelector("browser");
+                this.fileSystem.addSelector("runtime");
                 this.funcName = this.samplesData[type][index]["func"];
                 this.browserView.update();
 
@@ -395,14 +392,14 @@ class Editor {
 
     }
 
-    clickRunCode() {
+    runCode() {
 
         let fName = this.funcName;
     
 
         this.runtimeController.setFS(this.fileSystem);
 
-        this.runtimeController.run(this.fileSystem.getFile(this.runtimeFile).path+this.fileSystem.getFile(this.runtimeFile).name,
+        this.runtimeController.run(this.fileSystem.getFile("runtime").path+this.fileSystem.getFile("runtime").name,
             fName,fName === "test" ? function () {
                 this.outputView.print( "TEST FINISHED" ,"#4adbdb");
         }.bind(this) : null);
@@ -422,11 +419,12 @@ class Editor {
     
             //fName = this.samplesData["tests"][i].function_name ? this.samplesData["tests"][i].function_name : "main";
     
+            fileSystem.addSelector("test_runtime")
 
 
             this.runtimeController.setFS(fileSystem);
 
-            this.runtimeController.run(fileSystem.getFile(0).path+fileSystem.getFile(0).name,this.samplesData["tests"][i]["func"],function () {
+            this.runtimeController.run(fileSystem.getFile("test_runtime").path+fileSystem.getFile("test_runtime").name,this.samplesData["tests"][i]["func"],function () {
     
     
                 let ok = true;
