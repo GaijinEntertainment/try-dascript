@@ -361,7 +361,7 @@ class Editor {
             }
 
 
-            if (this.runtimeController.loaded)
+            if (this.runtimeController.isLoaded())
                 this.setPageStatus("Ready","#000000")
 
             if (onComplete)

@@ -40,6 +40,11 @@ class RuntimeController
 
     }
 
+    isLoaded()
+    {
+        return this.loaded;
+    }
+
 
 
     setFS(fileSystem)
