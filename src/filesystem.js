@@ -43,11 +43,6 @@ class FileSystem
         return this.files;
     }
 
-    setFiles(arr)
-    {
-        this.files = arr;
-    }
-
     newFile()
     {
         
@@ -77,9 +72,9 @@ class FileSystem
         });
     }
 
-    addFile(fileDescription)
+    addFile(name,path,text)
     {
-        this.files.push(fileDescription);
+        this.files.push({'name':name,'path':path,'text':text});
     }
 
     removeFile(selectorName)
@@ -149,5 +144,4 @@ class FileSystem
 
         return filesTraversal;
     }
-
 }

@@ -204,11 +204,7 @@ class BrowserView
                         fr.readAsText(el.files[i]);
                         fr.onload = function () {
     
-                            this.editor.fileSystem.addFile({
-                                "path":"",
-                                "name":el.files[i].name,
-                                "text":fr.result
-                            });
+                            this.editor.fileSystem.addFile("",el.files[i].name,fr.result);
                             this.update();
                         }.bind(this);
                     }

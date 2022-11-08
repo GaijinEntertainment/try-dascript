@@ -265,52 +265,45 @@ class Editor {
     }
 
 
-    getFiles(filesDesc,onComplete) {
+    getFiles(filesDescription,onComplete) {
 
 
-        let outFiles = [];
-    
+        let tempFileSystem = new FileSystem();
     
     
         let getFile = function (i) {
     
-            if (i>=filesDesc.length)
+            if (i>=filesDescription.length)
             {
-                let tempFileSystem = new FileSystem(null);
-                
-                tempFileSystem.setFiles(outFiles);
+                console.log(tempFileSystem.getFiles())
                 onComplete(tempFileSystem);
                 return;
             }
     
     
-            if (filesDesc[i].url)
+            if (filesDescription[i].url)
             {
     
-                if (this.fileCacheURL[filesDesc[i].url] !== undefined)
+                if (this.fileCacheURL[filesDescription[i].url] !== undefined)
                 {
-                    outFiles.push(
-                        {
-                            name : filesDesc[i].name,
-                            path : filesDesc[i].path ? filesDesc[i].path : "",
-                            text : this.fileCacheURL[filesDesc[i].url]
-                        });
+                    tempFileSystem.addFile( filesDescription[i].name,
+                             filesDescription[i].path ? filesDescription[i].path : "",
+                           this.fileCacheURL[filesDescription[i].url]
+                        );
     
                     getFile(i+1);
                 }
                 else
                 {
     
-                    $.get(filesDesc[i].url, function(ft) {
+                    $.get(filesDescription[i].url, function(ft) {
     
-                        this.fileCacheURL[filesDesc[i].url] = ft;
+                        this.fileCacheURL[filesDescription[i].url] = ft;
     
-                        outFiles.push(
-                            {
-                                name : filesDesc[i].name,
-                                path : filesDesc[i].path ? filesDesc[i].path : "",
-                                text : ft
-                            });
+                        tempFileSystem.addFile(filesDescription[i].name,
+                                filesDescription[i].path ? filesDescription[i].path : "",
+                                ft
+                            );
     
                         getFile(i+1);
     
@@ -319,11 +312,11 @@ class Editor {
             }
             else
             {
-                outFiles.push({
-                    name:filesDesc[i].name,
-                    path:filesDesc[i].path ? filesDesc[i].path : "",
-                    text:filesDesc[i].text
-                })
+                tempFileSystem.addFile(
+                    filesDescription[i].name,
+                    filesDescription[i].path ? filesDescription[i].path : "",
+                    filesDescription[i].text
+                )
     
                 getFile(i+1);
             }
