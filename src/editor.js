@@ -166,11 +166,12 @@ class Editor {
             }.bind(this))
 
         document.addEventListener("mousemove",function(e){
+            e.preventDefault();
             if (this.selectedSeparator!==-1)
-                this.setMainColPos(e);
+                this.setMainColPos(e.clientX);
         }.bind(this));
     
-        document.addEventListener("mouseup", function(e){
+        document.addEventListener("mouseup", function(){
             this.selectedSeparator = -1;
         }.bind(this));
 
@@ -237,10 +238,8 @@ class Editor {
     
     }
 
-    setMainColPos(e) {
+    setMainColPos(xx) {
 
-        e.preventDefault();
-        let xx = e.clientX;
         let wp = xx/window.innerWidth;
     
     
@@ -337,14 +336,8 @@ class Editor {
 
         this.getFiles(this.samplesData[type][index].files,function (fileSystem) {
 
-            /*
-            if (updateEnv)
-                code.setValue(filesData[0].text);*/
-
-
             if (updateEnv)
             {
-                //editorFilesData = filesData;
                 this.fileSystem = fileSystem;
                 this.fileSystem.addSelector("browser");
                 this.fileSystem.addSelector("runtime");
@@ -373,11 +366,7 @@ class Editor {
         if (vv !== NaN)
         {
 
-
             this.loadSample(type,vv,true,null)
-
-
-
         }
 
         this.sampleListDiv[type].value = "init";
