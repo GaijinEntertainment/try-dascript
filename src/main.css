@@ -3,7 +3,7 @@
 
 body {
     font-family: sans-serif;
-    font-size: 18px;
+    font-size: 14px;
     margin: 0;
 }
 
@@ -22,34 +22,45 @@ body {
     margin-left: 10px;
 }
 
-
-footer {
-    display: flex;
-    justify-content: center;
-
-    color: #747474;
-}
-
-footer_p {
-    font-size: 16px;
-}
-
-.main {
+.main_header {
 
 
+    font-size: 19px;
     display: flex;
     flex-flow: row wrap;
     padding: 0;
     color: black;
-
 }
-.main_header {
+
+.button_header {
+    font-size: 19px;
+    min-width: 80px;
+    height: 30px;
+}
+
+
+.select_header {
+    font-size: 19px;
+    min-width: 80px;
+    height: 30px;
+}
+
+.main_header_col {
+
+
+    padding-top: 15px;
+    padding-bottom: 15px;
+    flex: 1 1 50vh;
+    flex-direction: row;
     display: flex;
+
+    margin: 0;
     justify-content: space-between;
 
     padding-right: 1vw;
     padding-left: 1vw;
 }
+
 
 .main_header_left {
     display: flex;
@@ -68,82 +79,78 @@ footer_p {
 }
 
 
-.main_name {
-    font-size: 26px;
-
+.main {
+    
+    display: block;
+    width: 100%;
+    height: 700px;
+    top: 0;
+    left: 0;
+    right: 0;
 }
-
-.main_header_part {
-
-
-
-}
-
-
-
 .main_col {
-    padding-top: 20px;
-    flex: 1 1 50vh;
-    flex-direction: column;
+    position: absolute;
+    height: 700px;
+    
+}
+.main_options {
+    
+    padding: 4px 9px;
+    border: 1px solid #3f3f3f;
+    line-height: 2;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.main_options_flex {
     display: flex;
-
-    margin: 0;
+    justify-content: space-between;
+    align-items:center;
+    column-gap: 20px;
 }
 
-.button_header {
-    font-size: 21px;
+.main_options_header {
+    
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.button_options {
+    font-size: 15px;
     min-width: 80px;
-    height: 35px;
-}
-
-.input_header {
-    font-size: 21px;
-    height: 30px;
+    height: 25px;
 }
 
 
-.select_header {
-    font-size: 21px;
-    min-width: 80px;
-    height: 35px;
+.select_options {
 }
 
-.main_col_part
-{
-
-    max-width: 48vw;
-    padding-right: 1vw;
-    padding-left: 1vw;
+.separator {
+    position: absolute;
+    pointer-events: auto;
+    display: block;
+    
+    height: 700px;
+    width: 10px;
+    background-color: rgb(226, 226, 226);
+    cursor: e-resize;
 }
-
-
-
 
 
 #code {
 
-    font-size: 15px;
-    margin-top: 20px;
-    height: 80vh;
+    font-size: 14px;
+    height: 100%;
 }
 
 #output {
-    font-size: 16px;
-    margin-top: 20px;
-    height: 80vh;
-    width: 100%;
+    font-size: 12px;
+    height: 100%;
 
     border: 1px solid #8d8d8d;
     overflow-x: hidden;
     overflow-y: scroll;
 }
-
-#options {
-
-    padding-right: 1vw;
-    padding-left: 1vw;
-}
-
 
 .output_line {
     font-family: Consolas, Menlo, Monaco, monospace;
@@ -167,23 +174,9 @@ footer_p {
 
 }
 
-*.unselectable {
-    -moz-user-select: -moz-none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-
-    /*
-      Introduced in IE 10.
-      See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-    */
-    -ms-user-select: none;
-    user-select: none;
-}
-
 #file_browser {
-    font-size: 18px;
-    margin-top: 20px;
-    height: 20vh;
+    font-size: 14px;
+    height: 100%;
     width: 100%;
 
 
@@ -212,56 +205,14 @@ footer_p {
     margin: 5px;
 }
 
-.options_line {
+
+footer {
     display: flex;
-    flex-flow: row wrap;
-    gap: 12px
+    justify-content: center;
 
+    color: #747474;
 }
 
-@media (orientation: portrait)
-{
-
-
-
-    .header {
-        font-size: 12px;
-        height: 20px;
-    }
-
-    #main_name {
-        font-size: 18px;
-    }
-
-    #main_status {
-        font-size: 14px;
-    }
-
-    .main_header
-    {
-        padding-right: 2vw;
-        padding-left: 2vw;
-    }
-
-
-    .button_header {
-        font-size: 14px;
-        min-width: 40px;
-    }
-
-    .select_header {
-        font-size: 12px;
-        max-width: 110px;
-    }
-
-    .main_col_part
-    {
-        max-width: 100vw;
-    }
-
-
-    .footer_p {
-        font-size: 10px;
-    }
+footer_p {
+    font-size: 16px;
 }
-
