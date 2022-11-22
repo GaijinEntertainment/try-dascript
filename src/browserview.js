@@ -17,7 +17,6 @@ class BrowserView
 
         
         this.fileGroupDiv = [];
-        this.filePathDiv = [];
         this.fileNameDiv = [];
 
 
@@ -79,13 +78,9 @@ class BrowserView
                     let groupDiv = document.createElement("div");
                     groupDiv.classList.add("file_line");
 
-                    let pathDiv = document.createElement("div");
-                    pathDiv.classList.add("file_path");
-                    groupDiv.appendChild(pathDiv);
-                    this.filePathDiv.push(pathDiv);
 
                     let nameDiv = document.createElement("div");
-                    nameDiv.classList.add("file_name");
+                    nameDiv.classList.add("file_path");
                     groupDiv.appendChild(nameDiv);
                     this.fileNameDiv.push(nameDiv);
 
@@ -100,7 +95,7 @@ class BrowserView
                         this.update();
                     }.bind(this),false);
 
-                    this.fileNameDiv[i]._fileData = this.filePathDiv[i]._fileData = this.fileGroupDiv[i]._fileData = null;
+                    this.fileNameDiv[i]._fileData = this.fileGroupDiv[i]._fileData = null;
                 }
 
 
@@ -110,26 +105,27 @@ class BrowserView
                 if (filesTraversal[i].type==='directory')
                 {
 
-                    this.filePathDiv[i].innerHTML = pre+filesTraversal[i].name;
-                    this.fileNameDiv[i].innerHTML = "";
+                    this.fileNameDiv[i].innerHTML = pre+filesTraversal[i].name+"/";
+                    this.fileNameDiv[i].classList.toggle('directory',true);
+                    this.fileNameDiv[i].classList.toggle('selected',false);
+                    this.fileNameDiv[i].classList.toggle('runtime',false);
 
-                    this.fileGroupDiv[i].style.backgroundColor = "#FFFFFF";
-                    this.fileGroupDiv[i].style.fontWeight = "normal";
 
-                    this.fileNameDiv[i]._fileData = this.filePathDiv[i]._fileData = this.fileGroupDiv[i]._fileData = null;
+                    this.fileNameDiv[i]._fileData = this.fileGroupDiv[i]._fileData = null;
 
         
                 }
                 else if (filesTraversal[i].type==='file')
                 {
                     
-                    this.fileNameDiv[i]._fileData = this.filePathDiv[i]._fileData = this.fileGroupDiv[i]._fileData = filesTraversal[i].file;
+                    this.fileNameDiv[i]._fileData = this.fileGroupDiv[i]._fileData = filesTraversal[i].file;
+                    this.fileNameDiv[i].classList.toggle('directory',false)
 
-                    this.filePathDiv[i].innerHTML = "";
                     this.fileNameDiv[i].innerHTML = pre+filesTraversal[i].name;
 
-                    this.fileGroupDiv[i].style.backgroundColor = filesTraversal[i].file===this.editor.fileSystem.getFile("browser") ? "#e1e4f3" : "#FFFFFF";
-                    this.fileGroupDiv[i].style.fontWeight = filesTraversal[i].file===this.editor.fileSystem.getFile("runtime") ? "bold" : "normal";
+                    this.fileNameDiv[i].classList.toggle('selected',filesTraversal[i].file===this.editor.fileSystem.getFile("browser") );
+                    this.fileNameDiv[i].classList.toggle('runtime',filesTraversal[i].file===this.editor.fileSystem.getFile("runtime"));
+
                 }
 
                 //

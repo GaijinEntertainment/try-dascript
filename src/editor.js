@@ -15,7 +15,7 @@ class Editor {
 
 
 
-        this.mainColPos = [2/10,6/10];
+        this.mainColPos = [2.03/10,6/10];
 
         this.separatorDiv = [];
         this.mainColumnDiv = [];
@@ -48,7 +48,7 @@ class Editor {
     
         this.updateMainCol();
     
-        this.setPageStatus("Loading WASM","#ff0000")
+        this.setPageStatus("Loading WASM","waiting")
 
 
         this.fileCacheURL = {};
@@ -166,23 +166,27 @@ class Editor {
             }.bind(this))
 
         document.addEventListener("mousemove",function(e){
-            e.preventDefault();
+            
             if (this.selectedSeparator!==-1)
+            {
+                e.preventDefault();
                 this.setMainColPos(e.clientX);
+            }
         }.bind(this));
     
         document.addEventListener("mouseup", function(){
             this.selectedSeparator = -1;
         }.bind(this));
 
-        window.addEventListener("onerror", function(message)
+        window.addEventListener("error", function(message)
         {
-            this.outputView.print(message,'#ff2d2d');
-            this.outputView.print("An error occurred, you may need to reload the page",'#ff9393');
+            this.outputView.print(message,'error');
+            this.outputView.print("An error occurred, you may need to reload the page",'error');
         }.bind(this));
         
-        window.addEventListener("onresize",function() 
+        window.addEventListener("resize",function() 
         {
+            console.log("!!!!!!!!!")
             this.updateMainCol();
         }.bind(this));
         
@@ -190,7 +194,7 @@ class Editor {
         this.runtimeController.onPrint = function(text){
             
 
-            this.outputView.print(text,'#ffffff');
+            this.outputView.print(text,"");
 
             this.outputPool.push(text);
 
@@ -199,15 +203,16 @@ class Editor {
 
         this.runtimeController.onInit = function() {
             
-            this.setPageStatus("Runtime Ready","#000000")
+            this.setPageStatus("Runtime Ready","ready")
         }.bind(this);
 
     }
 
 
-    setPageStatus(text,color) {
+    setPageStatus(text,type) {
 
-        this.statusDiv.style.color = color;
+        this.statusDiv.classList.toggle("waiting",type=="waiting");
+        this.statusDiv.classList.toggle("ready",type=="ready");
         this.statusDiv.innerText = text;
     }
 
@@ -217,15 +222,15 @@ class Editor {
         let wp = [];
 
         for (let i=0;i<this.mainColumnNum-1;i++)
-            wp.push(Math.round(this.mainColPos[i]*window.innerWidth));
+            wp.push(Math.floor(this.mainColPos[i]*window.innerWidth));
 
-
+        this.mainColumnDiv[0].style.left = "8px";
         for (let i=0;i<this.mainColumnNum-1;i++)
         {
 
             
-            this.separatorDiv[i].style.left = (wp[i]-10)+"px"
-            this.mainColumnDiv[i+1].style.left = (wp[i])+"px"
+            this.separatorDiv[i].style.left = (8+wp[i]-10)+"px"
+            this.mainColumnDiv[i+1].style.left = (8+wp[i])+"px"
         }
 
 
@@ -233,7 +238,7 @@ class Editor {
         
         this.mainColumnDiv[1].style.width = (wp[1]-wp[0]-10)+"px";
         
-        this.mainColumnDiv[2].style.width = (window.innerWidth-wp[1]-10)+"px";
+        this.mainColumnDiv[2].style.width = (window.innerWidth-wp[1]-25)+"px";
 
     
     }
@@ -331,7 +336,7 @@ class Editor {
     {
 
         if (this.runtimeController.loaded)
-            this.setPageStatus("Loading files","#ff0000")
+            this.setPageStatus("Loading files","waiting")
 
 
         this.getFiles(this.samplesData[type][index].files,function (fileSystem) {
@@ -348,7 +353,7 @@ class Editor {
 
 
             if (this.runtimeController.isLoaded())
-                this.setPageStatus("Ready","#000000")
+                this.setPageStatus("Ready","ready")
 
             if (onComplete)
                 onComplete(fileSystem);
@@ -383,7 +388,7 @@ class Editor {
 
         this.runtimeController.run(this.fileSystem.getFile("runtime").path+this.fileSystem.getFile("runtime").name,
             fName,fName === "test" ? function () {
-                this.outputView.print( "TEST FINISHED" ,"#4adbdb");
+                this.outputView.print( "TEST FINISHED" ,"test");
         }.bind(this) : null);
     
     
@@ -395,7 +400,7 @@ class Editor {
 
         this.loadSample('tests',i,false,function(fileSystem) {
     
-            this.outputView.print("Running Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+this.samplesData["tests"][i].name,"#bec7b6");
+            this.outputView.print("Running Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+this.samplesData["tests"][i].name,"test");
     
             this.outputPool = [];
     
@@ -445,7 +450,7 @@ class Editor {
                         ok = false;
     
     
-                this.outputView.print(this.samplesData["tests"][i].name+" Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "#89db4a": '#ff9393');
+                this.outputView.print(this.samplesData["tests"][i].name+" Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "success": 'error');
     
                 if (i<this.samplesData["tests"].length-1)
                     this.runTest(i+1);

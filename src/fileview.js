@@ -15,7 +15,7 @@ class FileView
     
         this.code = CodeMirror( this.codeDiv, {
             lineNumbers: true, matchBrackets: true, indentWithTabs: false, styleActiveLine: true,
-            theme:'eclipse', mode:"application/javascript",
+            theme:'material-darker', mode:"application/javascript",
             tabSize: 4, indentUnit: 4, highlightSelectionMatches: {showToken: /\w/}
         });
     
