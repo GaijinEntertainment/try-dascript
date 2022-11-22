@@ -143,12 +143,12 @@
     {
       "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/test/hidden_test/",
       "files": ["_hidden_test.das"],
-      "to_path": "/examples/test/hidden_test/"
+      "to_path": "examples/test/hidden_test/"
     },
     {
       "url": "https://raw.githubusercontent.com/GaijinEntertainment/daScript/master/examples/test/hidden_module/",
       "files": ["hidden.das"],
-      "to_path": "/examples/test/hidden_module/"
+      "to_path": "examples/test/hidden_module/"
     }
   ],
   "unit_tests" : {
