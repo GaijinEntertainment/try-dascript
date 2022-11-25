@@ -315,3 +315,49 @@ footer {
     -ms-user-select: none;
     user-select: none;
 }
+
+.main_hide_col_button {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 9 9%27%3E%3Cpath fill=%27%23fff%27 d=%27M1.0096 8.0019v-.99809h6.9807v1.9962H1.0096z%27/%3E%3C/svg%3E");
+
+
+    background-size: 18px;
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    top:0px;
+    right:5px;
+    cursor: pointer;
+}
+
+.main_open_col_button {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 9 9%27%3E%3Cpath fill=%27%23fff%27 d=%27M0 4.5V0h9v9H0zM8 5V2H1v6h7z%27/%3E%3C/svg%3E");
+
+
+    background-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-left: -9px; 
+    position: absolute;
+    top:8px;
+    left:50%;
+    cursor: pointer;
+}
+
+.main_col_hidden {
+    background-color: #222;
+    width: 100%;
+    height: 100%;
+}
+.main_col_hidden_header {
+    font-size: 18px;
+    color: white;
+    height: 30px;
+    transform: rotate(270deg);
+    position: absolute;
+    top: 20%;
+    white-space: nowrap;
+
+    width: 100%;
+    margin: 0 auto;
+    
+}

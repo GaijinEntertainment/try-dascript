@@ -16,10 +16,14 @@ class Editor {
 
 
         this.mainColPos = [2.03/10,6/10];
+        this.mainColVisible = [false,true,true];
 
         this.separatorDiv = [];
         this.mainColumnDiv = [];
         this.mainColumnNum = 3;
+
+        this.mainColumnOpenedDiv = [];
+        this.mainColumnHiddenDiv = [];
 
         this.selectedSeparator = -1;
 
@@ -27,6 +31,27 @@ class Editor {
         {
             let mc = document.getElementById("main_col"+(i+1));
             this.mainColumnDiv.push(mc);
+
+
+            let mco = mc.getElementsByClassName("main_col_opened")[0];
+            this.mainColumnOpenedDiv.push(mco);
+
+            let mch = mc.getElementsByClassName("main_col_hidden")[0];
+            this.mainColumnHiddenDiv.push(mch);
+
+            mc.getElementsByClassName("main_hide_col_button")[0].addEventListener("click",function() {
+
+                this.setColVisible(i,false);
+            }.bind(this))
+
+            
+            mc.getElementsByClassName("main_open_col_button")[0].addEventListener("click",function() {
+
+                this.setColVisible(i,true);
+            }.bind(this))
+
+
+
         }
     
     
@@ -219,10 +244,47 @@ class Editor {
 
     updateMainCol() {
             
+        let hiddenWidth = 80/window.innerWidth;
+
+        let realPos = [this.mainColPos[0],this.mainColPos[1]];
+
+
+
+        if (!this.mainColVisible[0])
+        {
+
+            realPos[0] = hiddenWidth;
+
+            if (!this.mainColVisible[1])
+                realPos[1] = hiddenWidth*2;
+        }
+
+        if (!this.mainColVisible[2])
+        {
+            
+            realPos[1] = 1-hiddenWidth;
+
+            if (!this.mainColVisible[1])
+                realPos[0] = 1-hiddenWidth*2;
+        }
+        
+        
+        if (this.mainColVisible[0] && this.mainColVisible[2])
+        {
+            
+            if (!this.mainColVisible[1])
+            {
+                realPos[1] = realPos[0]+hiddenWidth;
+            }
+        }
+
+        
+
+
         let wp = [];
 
         for (let i=0;i<this.mainColumnNum-1;i++)
-            wp.push(Math.floor(this.mainColPos[i]*window.innerWidth));
+            wp.push(Math.floor(realPos[i]*window.innerWidth));
 
         this.mainColumnDiv[0].style.left = "8px";
         for (let i=0;i<this.mainColumnNum-1;i++)
@@ -240,6 +302,13 @@ class Editor {
         
         this.mainColumnDiv[2].style.width = (window.innerWidth-wp[1]-25)+"px";
 
+        
+
+        for (let i=0;i<this.mainColumnNum;i++)
+        {
+            this.mainColumnOpenedDiv[i].style.display = this.mainColVisible[i] ? "block" : "none";
+            this.mainColumnHiddenDiv[i].style.display = this.mainColVisible[i] ? "none" : "block";
+        }
     
     }
 
@@ -248,14 +317,16 @@ class Editor {
         let wp = xx/window.innerWidth;
     
     
-        let minw = 0.05;
-        let maxw = 1-0.05;
+        let wm = 0.1;
+
+        let minw = wm;
+        let maxw = 1-wm;
     
         if (this.selectedSeparator>0)
-            minw = this.mainColPos[this.selectedSeparator-1]+0.05;
+            minw = this.mainColPos[this.selectedSeparator-1]+wm;
     
         if (this.selectedSeparator<this.mainColumnNum-2)
-            maxw = this.mainColPos[this.selectedSeparator+1]-0.05;
+            maxw = this.mainColPos[this.selectedSeparator+1]-wm;
     
         if (wp>maxw)
             wp = maxw;
@@ -268,6 +339,27 @@ class Editor {
         this.updateMainCol();
     }
 
+    setColVisible(i,visible) {
+
+        let canChange = true;
+
+        
+        let hidden = 0;
+
+        for (let i=0;i<this.mainColumnNum;i++)
+            if (!this.mainColVisible[i])
+                hidden+=1;
+
+        if (hidden==this.mainColumnNum-1 && visible == false)
+            canChange = false;
+
+        if (canChange)
+        {
+            this.mainColVisible[i] = visible;
+            this.updateMainCol();
+        }
+
+    }
 
     getFiles(filesDescription,onComplete) {
 

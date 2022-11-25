@@ -94,59 +94,69 @@
     <div id="main_col1" class="main_col">
 
 
+        <div class="main_col_opened">
 
-
-        <div class="main_options" style="height:220px">
-             
-            <div class="main_options_header">File Browser</div>
-            <div class="main_options_tools">
-            
-                <div>
-                    <button id="new_file" class="btn btn-dark">New File</button>
-                    <button id="load_file" class="btn btn-dark">Load File</button>
-                    <button id="remove_file" class="btn btn-dark">Remove</button>
-                </div>
-                <div class="break"></div>
+            <div class="main_options" style="height:220px">
                 
-                <div class="input-group" style="width:240px">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text custom-dark">Path:</span>
-                    </div>
-                    <input type="text" class="form-control custom-dark"  id="file_path_input">
-                    </div>
-                <div class="break"></div>
+
+                
+                    <div class="main_options_header">File Browser</div>
+                    <div class="main_options_tools">
+                    
+                        <div>
+                            <button id="new_file" class="btn btn-dark">New File</button>
+                            <button id="load_file" class="btn btn-dark">Load File</button>
+                            <button id="remove_file" class="btn btn-dark">Remove</button>
+                        </div>
+                        <div class="break"></div>
+                        
+                        <div class="input-group" style="width:240px">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text custom-dark">Path:</span>
+                            </div>
+                            <input type="text" class="form-control custom-dark"  id="file_path_input">
+                            </div>
+                        <div class="break"></div>
+        
+        
+        
+        
+                        <div class="input-group" style="width:240px">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text custom-dark">File:</span>
+                            </div>
+                            <input type="text" class="form-control custom-dark" id="file_name_input">
+                            </div>
+                        <div class="break"></div>
+                    
+                        <div>
+                            <button class="btn btn-dark" id="select_runtime">Select File For Runtime</button>
+                        </div>
+                    </div> 
+                
+                
+                
 
 
-
-
-                <div class="input-group" style="width:240px">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text custom-dark">File:</span>
-                    </div>
-                    <input type="text" class="form-control custom-dark" id="file_name_input">
-                    </div>
-                <div class="break"></div>
-            
-                <div>
-                    <button class="btn btn-dark" id="select_runtime">Select File For Runtime</button>
-                </div>
-            </div> 
-            
-
-
-        </div>
-        <div class="main_block" style="height:480px">
-
-    
-    
-    
-            <div id="file_browser">
-    
             </div>
+            <div class="main_hide_col_button"></div>
+            <div class="main_block" style="height:480px">
+
+        
+        
+        
+                <div id="file_browser">
+        
+                </div>
+            </div>
+
+
         </div>
 
-
-
+        <div class="main_col_hidden">
+            <div class="main_col_hidden_header">File Browser</div>
+            <div class="main_open_col_button"></div>
+        </div>
      
     
         
@@ -159,20 +169,27 @@
     <div id="main_col2" class="main_col">
         
         
-        <div class="main_options" style="height:70px">
-            
-            <div class="main_options_header">File Viewer</div>
-            <div class="main_options_tools">
+        <div class="main_col_opened">
+            <div class="main_options" style="height:70px">
                 
-                <div id="file_name_caption" class="main_options_caption">main.das</div>
-            
+                <div class="main_options_header">File Viewer</div>
+                <div class="main_options_tools">
+                    
+                    <div id="file_name_caption" class="main_options_caption">main.das</div>
+                
+                </div>
+                
             </div>
-            
-        </div>
-        <div class="main_block" style="height:630px">
+            <div class="main_hide_col_button"></div>
+            <div class="main_block" style="height:630px">
 
-            <div id="code">
+                <div id="code">
+                </div>
             </div>
+        </div>
+        <div class="main_col_hidden">
+            <div class="main_col_hidden_header">File Viewer</div>
+            <div class="main_open_col_button"></div>
         </div>
         
 
@@ -181,26 +198,32 @@
     <div id="separator2" class="separator"></div>
         
     <div id="main_col3" class="main_col">
-    
-        <div class="main_options" style="height:85px">
-
-
-            <div class="main_options_header">Output</div>
-            <div class="main_options_tools">
-                <button id="clear_output" class="btn btn-dark">Clear</button>
-            </div>
-            
-            
-
-
-
-        </div>
-        <div class="main_block"  style="height:615px">
-
-            <div id="output">
-            </div>
-        </div>
+        <div class="main_col_opened">
         
+            <div class="main_options" style="height:85px">
+
+
+                <div class="main_options_header">Output</div>
+                <div class="main_options_tools">
+                    <button id="clear_output" class="btn btn-dark">Clear</button>
+                </div>
+                
+                
+
+
+
+            </div>
+            <div class="main_hide_col_button"></div>
+            <div class="main_block"  style="height:615px">
+
+                <div id="output">
+                </div>
+            </div>
+        </div>
+        <div class="main_col_hidden">
+            <div class="main_col_hidden_header">Output</div>
+            <div class="main_open_col_button"></div>
+        </div>
         
         
     </div>
