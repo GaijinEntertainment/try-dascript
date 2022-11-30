@@ -34,6 +34,10 @@ class WindowController
 
         this.selectedSeparator = -1;
 
+
+        this.mainBlockDiv = [];
+        this.mainOptionsHeight = [];
+
         for (let i=0;i<this.columnNum;i++)
         {
             let mc = document.getElementById("main_col"+(i+1));
@@ -58,6 +62,12 @@ class WindowController
             }.bind(this))
 
 
+            let mcb = mc.getElementsByClassName("main_block")[0];
+            this.mainBlockDiv.push(mcb);
+
+            
+            let mcc = mc.getElementsByClassName("main_options")[0];
+            this.mainOptionsHeight.push(parseInt(mcc.style.height,10));
 
         }
     
@@ -248,6 +258,21 @@ class WindowController
             show.classList.toggle("right_anchor",this.colAnchor[i]!==0);
 
         }
+
+
+
+        let mainHeight = window.innerHeight-250;
+
+        if (mainHeight<500)
+            mainHeight = 500;
+
+        for (let i=0;i<this.columnNum;i++)
+            this.mainBlockDiv[i].style.height = (mainHeight-this.mainOptionsHeight[i])+'px'
+
+
+        document.querySelector(':root').style.setProperty('--main-height', mainHeight+'px');
+
+
     }
 
 
