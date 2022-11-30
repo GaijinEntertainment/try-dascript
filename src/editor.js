@@ -13,6 +13,7 @@ class Editor {
 
         this.statusDiv = document.getElementById("main_status");
 
+        this.runtimeButton = document.getElementById("run_code");
 
         //this.windowController = new WindowController(this,5, [2/10,4/10,6/10,8/10],[true,true,true,true,true])
 
@@ -129,7 +130,8 @@ class Editor {
             }.bind(this))
 
 
-        document.getElementById("run_code").addEventListener("click",
+
+        this.runtimeButton.addEventListener("click",
             function() {
                 this.runCode()
             }.bind(this))
@@ -155,7 +157,7 @@ class Editor {
 
         this.runtimeController.onInit = function() {
             
-            this.setPageStatus("Runtime Ready","ready")
+            this.setPageStatus("","ready")
         }.bind(this);
 
     }
@@ -166,6 +168,9 @@ class Editor {
         this.statusDiv.classList.toggle("waiting",type=="waiting");
         this.statusDiv.classList.toggle("ready",type=="ready");
         this.statusDiv.innerText = text;
+
+
+        this.runtimeButton.disabled = type==="waiting";
     }
 
 
@@ -254,7 +259,7 @@ class Editor {
 
 
             if (this.runtimeController.isLoaded())
-                this.setPageStatus("Ready","ready")
+                this.setPageStatus("","ready")
 
             if (onComplete)
                 onComplete(fileSystem);
