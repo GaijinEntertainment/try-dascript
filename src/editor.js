@@ -14,64 +14,11 @@ class Editor {
         this.statusDiv = document.getElementById("main_status");
 
 
+        //this.windowController = new WindowController(this,5, [2/10,4/10,6/10,8/10],[true,true,true,true,true])
 
-        this.mainColPos = [2.03/10,6/10];
-        this.mainColVisible = [false,true,true];
-
-        this.separatorDiv = [];
-        this.mainColumnDiv = [];
-        this.mainColumnNum = 3;
-
-        this.mainColumnOpenedDiv = [];
-        this.mainColumnHiddenDiv = [];
-
-        this.selectedSeparator = -1;
-
-        for (let i=0;i<this.mainColumnNum;i++)
-        {
-            let mc = document.getElementById("main_col"+(i+1));
-            this.mainColumnDiv.push(mc);
+        this.windowController = new WindowController(this,3, [2.03/10,6/10],[false,true,true])
 
 
-            let mco = mc.getElementsByClassName("main_col_opened")[0];
-            this.mainColumnOpenedDiv.push(mco);
-
-            let mch = mc.getElementsByClassName("main_col_hidden")[0];
-            this.mainColumnHiddenDiv.push(mch);
-
-            mc.getElementsByClassName("main_hide_col_button")[0].addEventListener("click",function() {
-
-                this.setColVisible(i,false);
-            }.bind(this))
-
-            
-            mc.getElementsByClassName("main_open_col_button")[0].addEventListener("click",function() {
-
-                this.setColVisible(i,true);
-            }.bind(this))
-
-
-
-        }
-    
-    
-        for (let i=0;i<this.mainColumnNum-1;i++)
-        {
-            let sep = document.getElementById("separator"+(i+1));
-    
-            sep.addEventListener("mousedown",function(e){
-                if (this.selectedSeparator===-1)
-                this.selectedSeparator = i;
-            }.bind(this))
-    
-            //sep.style.left = (sp[i])+"px"
-    
-            this.separatorDiv.push(sep);
-        }
-        
-    
-    
-        this.updateMainCol();
     
         this.setPageStatus("Loading WASM","waiting")
 
@@ -88,9 +35,6 @@ class Editor {
 
     
     
-
-        //this.selectedFile = -1;
-        //this.runtimeFile = -1;
         this.funcName = "main";
 
 
@@ -190,18 +134,6 @@ class Editor {
                 this.runCode()
             }.bind(this))
 
-        document.addEventListener("mousemove",function(e){
-            
-            if (this.selectedSeparator!==-1)
-            {
-                e.preventDefault();
-                this.setMainColPos(e.clientX);
-            }
-        }.bind(this));
-    
-        document.addEventListener("mouseup", function(){
-            this.selectedSeparator = -1;
-        }.bind(this));
 
         window.addEventListener("error", function(message)
         {
@@ -209,11 +141,6 @@ class Editor {
             this.outputView.print("An error occurred, you may need to reload the page",'error');
         }.bind(this));
         
-        window.addEventListener("resize",function() 
-        {
-            console.log("!!!!!!!!!")
-            this.updateMainCol();
-        }.bind(this));
         
 
         this.runtimeController.onPrint = function(text){
@@ -242,124 +169,7 @@ class Editor {
     }
 
 
-    updateMainCol() {
-            
-        let hiddenWidth = 80/window.innerWidth;
 
-        let realPos = [this.mainColPos[0],this.mainColPos[1]];
-
-
-
-        if (!this.mainColVisible[0])
-        {
-
-            realPos[0] = hiddenWidth;
-
-            if (!this.mainColVisible[1])
-                realPos[1] = hiddenWidth*2;
-        }
-
-        if (!this.mainColVisible[2])
-        {
-            
-            realPos[1] = 1-hiddenWidth;
-
-            if (!this.mainColVisible[1])
-                realPos[0] = 1-hiddenWidth*2;
-        }
-        
-        
-        if (this.mainColVisible[0] && this.mainColVisible[2])
-        {
-            
-            if (!this.mainColVisible[1])
-            {
-                realPos[1] = realPos[0]+hiddenWidth;
-            }
-        }
-
-        
-
-
-        let wp = [];
-
-        for (let i=0;i<this.mainColumnNum-1;i++)
-            wp.push(Math.floor(realPos[i]*window.innerWidth));
-
-        this.mainColumnDiv[0].style.left = "8px";
-        for (let i=0;i<this.mainColumnNum-1;i++)
-        {
-
-            
-            this.separatorDiv[i].style.left = (8+wp[i]-10)+"px"
-            this.mainColumnDiv[i+1].style.left = (8+wp[i])+"px"
-        }
-
-
-        this.mainColumnDiv[0].style.width = wp[0]-10+"px";
-        
-        this.mainColumnDiv[1].style.width = (wp[1]-wp[0]-10)+"px";
-        
-        this.mainColumnDiv[2].style.width = (window.innerWidth-wp[1]-25)+"px";
-
-        
-
-        for (let i=0;i<this.mainColumnNum;i++)
-        {
-            this.mainColumnOpenedDiv[i].style.display = this.mainColVisible[i] ? "block" : "none";
-            this.mainColumnHiddenDiv[i].style.display = this.mainColVisible[i] ? "none" : "block";
-        }
-    
-    }
-
-    setMainColPos(xx) {
-
-        let wp = xx/window.innerWidth;
-    
-    
-        let wm = 0.1;
-
-        let minw = wm;
-        let maxw = 1-wm;
-    
-        if (this.selectedSeparator>0)
-            minw = this.mainColPos[this.selectedSeparator-1]+wm;
-    
-        if (this.selectedSeparator<this.mainColumnNum-2)
-            maxw = this.mainColPos[this.selectedSeparator+1]-wm;
-    
-        if (wp>maxw)
-            wp = maxw;
-    
-        if (wp<minw)
-            wp = minw;
-    
-            this.mainColPos[this.selectedSeparator] = wp;
-    
-        this.updateMainCol();
-    }
-
-    setColVisible(i,visible) {
-
-        let canChange = true;
-
-        
-        let hidden = 0;
-
-        for (let i=0;i<this.mainColumnNum;i++)
-            if (!this.mainColVisible[i])
-                hidden+=1;
-
-        if (hidden==this.mainColumnNum-1 && visible == false)
-            canChange = false;
-
-        if (canChange)
-        {
-            this.mainColVisible[i] = visible;
-            this.updateMainCol();
-        }
-
-    }
 
     getFiles(filesDescription,onComplete) {
 
@@ -371,7 +181,6 @@ class Editor {
     
             if (i>=filesDescription.length)
             {
-                console.log(tempFileSystem.getFiles())
                 onComplete(tempFileSystem);
                 return;
             }
