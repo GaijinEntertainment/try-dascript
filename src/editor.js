@@ -171,6 +171,23 @@ class Editor {
                 this.runCode()
             }.bind(this))
 
+        /*
+            
+        <div>
+            <button id="restart_env" class="btn btn-danger">Reload</button>
+        </div>
+
+        document.getElementById("restart_env").addEventListener("click",
+            function() {
+
+
+                this.runtimeController.restartEnvironment();
+
+                
+            }.bind(this))
+
+            */
+
         document.getElementById("share_code").addEventListener("click",
             function() {
                 this.generateShareLink();
@@ -189,10 +206,12 @@ class Editor {
         }.bind(this))
 
 
-        window.addEventListener("error", function(message)
+        window.addEventListener("error", function(e)
         {
-            this.outputView.print(message,'error');
-            this.outputView.print("An error occurred, you may need to reload the page",'error');
+            this.outputView.print(e.message,'error');
+            this.outputView.print("An error occurred. Environment will reload",'error');
+            this.setPageStatus("Reloading","waiting")
+            runtimeController.restartEnvironment();
         }.bind(this));
         
         
@@ -208,7 +227,6 @@ class Editor {
 
 
         this.runtimeController.onInit = function() {
-            
             this.setPageStatus("","ready")
         }.bind(this);
 

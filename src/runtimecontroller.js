@@ -84,6 +84,27 @@ class RuntimeController
     }
 
 
+    restartEnvironment()
+    {
+        calledRun = undefined;
+        
+        //$('script[src="' + src + '"]').remove();
+        //$('<script>').attr('src', src).appendTo('head');
+
+        let src = './daScript.js';
+        
+        document.querySelector('script[src="' + src + '"]').remove();
+
+        let script = document.createElement('script');
+        script.src = src;
+        script.type = "text/javascript"
+        document.body.appendChild(script);
+
+
+    
+    }
+
+
 
 
 }
