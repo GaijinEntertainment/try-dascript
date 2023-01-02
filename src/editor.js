@@ -190,7 +190,7 @@ class Editor {
 
         document.getElementById("share_code").addEventListener("click",
             function() {
-                this.generateShareLink();
+                this.copyShareLink();
             }.bind(this))
 
             
@@ -226,6 +226,12 @@ class Editor {
         }.bind(this));
         
         
+        window.addEventListener('hashchange', function (e)
+        {
+            this.stateHashUpdate();
+
+        }.bind(this));
+
 
         this.runtimeController.onPrint = function(text){
             
@@ -436,30 +442,49 @@ class Editor {
         }.bind(this),10)
     }
 
+    generateShareHash()
+    {
+
+        return "#z:"+this.encodeStateToBase64();
+
+
+    }
+
     generateShareLink()
     {
 
-        let mainUrl = window.location.protocol + '//' + window.location.hostname  + '/';
-        let base64 = this.encodeStateToBase64();
+        //let mainUrl = window.location.protocol + '//' + window.location.hostname  + '/';
+
+        let mainUrl = window.location.protocol+'//'+window.location.host+window.location.pathname+"/";
+
+        let hash = this.generateShareHash();
+
+        
+
+        return mainUrl+hash;
 
 
 
+    }
 
-        let warn = base64.length > 4000;
+    copyShareLink()
+    {
+
+        let url = this.generateShareLink();
+
+        let warn = url.length > 4000;
 
 
         this.setShareStatus("Link coppied to clipboard" + (warn ? " (URL too long)" : ""), warn ? "warning" : "")
 
         var copyText = document.getElementById("clip_input");
-        copyText.value = mainUrl+"#z:"+base64;
+        copyText.value = url;
 
         copyText.select();
         copyText.setSelectionRange(0, 99999); // For mobile devices
 
         navigator.clipboard.writeText(copyText.value);
-
     }
-
 
 
     fileSaveJSON() {
@@ -558,7 +583,21 @@ class Editor {
         }.bind(this) : null);
     
     
+
+        window.location.hash = this.generateShareHash();
     
+    }
+
+    stateHashUpdate()
+    {
+        let fact = this.generateShareHash();
+        let cur = window.location.hash;
+
+
+        if (fact!==cur)
+            {
+                this.loadStateFromBase64(cur.substring(3))
+            }
     }
 
 
