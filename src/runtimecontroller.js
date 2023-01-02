@@ -86,10 +86,10 @@ class RuntimeController
 
     restartEnvironment()
     {
+
+        //small hack
         calledRun = undefined;
         
-        //$('script[src="' + src + '"]').remove();
-        //$('<script>').attr('src', src).appendTo('head');
 
         let src = './daScript.js';
         

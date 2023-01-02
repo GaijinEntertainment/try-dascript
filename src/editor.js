@@ -208,10 +208,21 @@ class Editor {
 
         window.addEventListener("error", function(e)
         {
-            this.outputView.print(e.message,'error');
+
+            console.error(e)
+
+            let msg = e;
+
+            if ("message" in e)
+                msg = e.message;
+
+            this.outputView.print(msg,'error');
             this.outputView.print("An error occurred. Environment will reload",'error');
+
             this.setPageStatus("Reloading","waiting")
+
             runtimeController.restartEnvironment();
+
         }.bind(this));
         
         
