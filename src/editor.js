@@ -3,6 +3,10 @@ class Editor {
 
     constructor(runtimeController)
     {
+
+
+        this.structVersion = "0.9"
+
         this.runtimeController = runtimeController;
 
         this.fileSystem = new FileSystem();
@@ -14,6 +18,9 @@ class Editor {
         this.statusDiv = document.getElementById("main_status");
 
         this.runtimeButton = document.getElementById("run_code");
+
+        
+        this.shareDiv = document.getElementById("share_status");
 
         //this.windowController = new WindowController(this,5, [2/10,4/10,6/10,8/10],[true,true,true,true,true])
 
@@ -35,8 +42,31 @@ class Editor {
         };
 
     
-    
         this.funcName = "main";
+
+
+
+        let loadDefaultSample = true;
+
+
+
+
+        let base64preset = null;
+
+        if (window.location.hash)
+            if (window.location.hash.charAt(1)==="z")
+                base64preset = window.location.hash.substring(3)
+
+
+        if (base64preset)
+            {
+                this.loadStateFromBase64(base64preset,
+                    function() {loadDefaultSample = false;},
+                    null);
+            }
+
+
+    
 
 
         $.getJSON( "./samples/data.json", function(res) {
@@ -102,11 +132,16 @@ class Editor {
                 }
             }.bind(this));
     
-            this.selectSample("examples",0);
+            
+            
+            if (loadDefaultSample)
+                this.selectSample("examples",0);
     
     
     
         }.bind(this));
+
+
     
     
         this.outputPool = [];
@@ -136,11 +171,58 @@ class Editor {
                 this.runCode()
             }.bind(this))
 
+        /*
+            
+        <div>
+            <button id="restart_env" class="btn btn-danger">Reload</button>
+        </div>
 
-        window.addEventListener("error", function(message)
+        document.getElementById("restart_env").addEventListener("click",
+            function() {
+
+
+                this.runtimeController.restartEnvironment();
+
+                
+            }.bind(this))
+
+            */
+
+        document.getElementById("share_code").addEventListener("click",
+            function() {
+                this.generateShareLink();
+            }.bind(this))
+
+            
+        document.getElementById("save_json").addEventListener("click",
+        function() {
+            this.fileSaveJSON();
+        }.bind(this))
+
+        
+        document.getElementById("load_json").addEventListener("click",
+        function() {
+            this.fileLoadJSON();
+        }.bind(this))
+
+
+        window.addEventListener("error", function(e)
         {
-            this.outputView.print(message,'error');
-            this.outputView.print("An error occurred, you may need to reload the page",'error');
+
+            console.error(e)
+
+            let msg = e;
+
+            if ("message" in e)
+                msg = e.message;
+
+            this.outputView.print(msg,'error');
+            this.outputView.print("An error occurred. Environment will reload",'error');
+
+            this.setPageStatus("Reloading","waiting")
+
+            runtimeController.restartEnvironment();
+
         }.bind(this));
         
         
@@ -156,7 +238,6 @@ class Editor {
 
 
         this.runtimeController.onInit = function() {
-            
             this.setPageStatus("","ready")
         }.bind(this);
 
@@ -267,6 +348,185 @@ class Editor {
 
 
 
+    }
+
+
+    toJSON() {
+        
+        return {
+            "v" : this.structVersion,
+
+            "func" : this.funcName,
+            "fs" : this.fileSystem.toJSON()
+        }
+    }
+
+    loadFromJSON(json) {
+
+
+        if (json["v"] !== this.structVersion)
+            throw "Wrong JSON version"
+
+        this.funcName = json["func"];
+
+        this.fileSystem.loadFromJSON(json["fs"]);
+
+        this.browserView.update();
+    }
+
+
+    encodeStateToBase64()
+    {
+
+
+        let jData = this.toJSON();
+
+
+
+        let jsonS = JSON.stringify(jData);
+
+
+        return btoa(jsonS)
+    }
+
+    loadStateFromBase64(base64, onSuccess, onError)
+    {
+
+
+        try 
+        {
+
+
+            let decodedS= atob(base64);
+
+            let jData = JSON.parse(decodedS)
+
+            this.loadFromJSON(jData);
+
+
+            if (onSuccess)
+                onSuccess()
+        }
+        catch (e)
+        {
+            console.log(e)
+            if (onError)
+                onError()
+        }
+
+    }
+
+
+    setShareStatus(text,type) {
+
+
+        this.shareDiv.innerText = text;
+
+        this.shareDiv.classList.toggle("warning",type=="warning");
+        
+
+        this.shareDiv.classList.toggle("hidden",false);
+        this.shareDiv.classList.toggle("appeared",true);
+
+
+    
+        window.setTimeout(function () {
+            this.shareDiv.classList.toggle("hidden",true);
+            this.shareDiv.classList.toggle("appeared",false);
+        }.bind(this),10)
+    }
+
+    generateShareLink()
+    {
+
+        let mainUrl = window.location.protocol + '//' + window.location.hostname  + '/';
+        let base64 = this.encodeStateToBase64();
+
+
+
+
+        let warn = base64.length > 4000;
+
+
+        this.setShareStatus("Link coppied to clipboard" + (warn ? " (URL too long)" : ""), warn ? "warning" : "")
+
+        var copyText = document.getElementById("clip_input");
+        copyText.value = mainUrl+"#z:"+base64;
+
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        navigator.clipboard.writeText(copyText.value);
+
+    }
+
+
+
+    fileSaveJSON() {
+
+        
+        this.setShareStatus("Saved to JSON", "")
+
+
+        var a = document.createElement("a");
+        var file = new Blob([JSON.stringify(this.toJSON())], {type: "text/plain"});
+        a.href = URL.createObjectURL(file);
+
+
+
+        a.download = this.fileSystem.getFile("runtime").name.split(".")[0] +"_"+((new Date()).toISOString().substring(0, 10).replaceAll('-','_')) + ".json";
+        a.click();
+    
+    }
+
+    fileLoadJSON() {
+
+        
+
+        var el = window._protected_reference = document.createElement("INPUT");
+        el.type = "file";
+        el.accept = ".json"
+        el.addEventListener('change', function(ev2) {
+
+            if (el.files.length) {
+
+                
+                //this.setShareStatus("Loading JSON", "")
+
+                let fr = new FileReader();
+                fr.readAsText(el.files[0]);
+                fr.onload = function () {
+
+                    //this.editor.fileSystem.addFile("",el.files[i].name,fr.result);
+
+                    try {
+
+                        this.loadFromJSON(JSON.parse(fr.result));
+
+                        this.setShareStatus("JSON loaded", "")
+                    }
+                    catch
+                    {
+                        this.setShareStatus("Failed loading JSON", "warning")
+
+                    }
+                }.bind(this);
+
+    
+            }
+    
+    
+            new Promise(function(resolve) {
+                    setTimeout(function() { resolve(); }, 1000);
+                })
+                    .then(function() {
+    
+                        el = window._protected_reference = undefined;
+                    });
+    
+            }.bind(this));
+    
+        el.click();
     }
 
     selectSample(type,id) {

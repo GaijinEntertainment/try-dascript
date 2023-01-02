@@ -35,8 +35,6 @@ class OutputView
         let out = document.createElement("div");
         out.classList.add("output_line");
 
-        console.log(out)
-        
         out.classList.toggle("error",type=="error");
         out.classList.toggle("test",type=="test");
         out.classList.toggle("success",type=="success");

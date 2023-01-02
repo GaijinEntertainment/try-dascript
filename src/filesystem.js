@@ -144,4 +144,54 @@ class FileSystem
 
         return filesTraversal;
     }
+
+
+    toJSON()
+    {
+
+        let f = [];
+
+        let c = [];
+
+
+        for (let i=0;i<this.files.length;i++)
+        {
+            f.push(
+                {
+                    'name' : this.files[i].name,
+                    'path' : this.files[i].path,
+                    'text' : this.files[i].text
+                }
+            )
+        }
+
+        Object.keys(this.selector).forEach(key => {
+            
+            c.push(
+                {
+                    'key' : key,
+                    'value' : this.selector[key]
+                }
+            )
+          });
+
+        return {
+            "files" : f,
+            "selectors" : c
+        }
+    }
+
+    loadFromJSON(json)
+    {
+
+
+        this.files = [];
+        this.selectors = {};
+
+        for (let i=0;i<json.files.length;i++)
+            this.addFile(json.files[i].name,json.files[i].path,json.files[i].text);
+
+        for (let i=0;i<json.selectors.length;i++)
+            this.selector[json.selectors[i].key] = json.selectors[i].value;
+    }
 }
