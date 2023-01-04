@@ -387,12 +387,14 @@ class Editor {
 
         let jData = this.toJSON();
 
-
-
         let jsonS = JSON.stringify(jData);
 
+        let buf = fflate.strToU8(jsonS);
+        
+        let compressed = fflate.compressSync(buf, { level: 6, mem: 8,mtime:0 });
 
-        return btoa(jsonS)
+        return btoa(String.fromCharCode.apply(null, compressed));
+
     }
 
     loadStateFromBase64(base64, onSuccess, onError)
@@ -402,9 +404,13 @@ class Editor {
         try 
         {
 
+            let arr = new Uint8Array(atob(base64).split("").map(function(c) {
+                return c.charCodeAt(0); }))
 
-            let decodedS= atob(base64);
+            let decompressed = fflate.decompressSync(arr);
 
+            let decodedS =  fflate.strFromU8(decompressed);
+                 
             let jData = JSON.parse(decodedS)
 
             this.loadFromJSON(jData);
@@ -415,7 +421,7 @@ class Editor {
         }
         catch (e)
         {
-            console.log(e)
+            console.error(e)
             if (onError)
                 onError()
         }
