@@ -54,8 +54,15 @@ class Editor {
         let base64preset = null;
 
         if (window.location.hash)
-            if (window.location.hash.charAt(1)==="z")
-                base64preset = window.location.hash.substring(3)
+        {
+            let p1 = window.location.hash.indexOf("s:")
+            let p2 = window.location.hash.indexOf(":s")
+
+            if (p1!==-1 && p2!==-1)
+                base64preset = window.location.hash.substring(p1+2,p2)
+                            
+
+        }
 
 
         if (base64preset)
@@ -451,7 +458,7 @@ class Editor {
     generateShareHash()
     {
 
-        return "#z:"+this.encodeStateToBase64();
+        return "#s:"+this.encodeStateToBase64()+":s";
 
 
     }
@@ -578,10 +585,15 @@ class Editor {
 
     runCode() {
 
+
+        
+        window.location.hash = this.generateShareHash();
+
         let fName = this.funcName;
     
 
         this.runtimeController.setFS(this.fileSystem);
+
 
         this.runtimeController.run(this.fileSystem.getFile("runtime").path+this.fileSystem.getFile("runtime").name,
             fName,fName === "test" ? function () {
@@ -589,8 +601,6 @@ class Editor {
         }.bind(this) : null);
     
     
-
-        window.location.hash = this.generateShareHash();
     
     }
 
@@ -602,7 +612,13 @@ class Editor {
 
         if (fact!==cur)
             {
-                this.loadStateFromBase64(cur.substring(3))
+
+                let p1 = cur.indexOf("s:")
+                let p2 = cur.indexOf(":s")
+    
+                if (p1!==-1 && p2!==-1)
+                    this.loadStateFromBase64(cur.substring(p1+2,p2))
+
             }
     }
 
