@@ -46,6 +46,8 @@ class Editor {
 
 
 
+
+
         let loadDefaultSample = true;
 
 
@@ -223,8 +225,8 @@ class Editor {
             if ("message" in e)
                 msg = e.message;
 
-            this.outputView.print(msg,'error');
-            this.outputView.print("An error occurred. Environment will reload",'error');
+            this.outputView.printLine(msg,'error');
+            this.outputView.printLine("An error occurred. Environment will reload",'error');
 
             this.setPageStatus("Reloading","waiting")
 
@@ -240,12 +242,31 @@ class Editor {
         }.bind(this));
 
 
-        this.runtimeController.onPrint = function(text){
+        this.runtimeController.onPrintLine = function(text){
             
 
-            this.outputView.print(text,"");
+            this.outputView.printLine(text,"");
 
             this.outputPool.push(text);
+
+        }.bind(this);
+
+        this.runtimeController.onPrintChar = function(ch) {
+
+            this.outputView.printChar(ch);
+
+            if (ch==="\n")
+                this.outputPool.push("")
+            else
+            {
+
+                if (this.outputPool.length === 0)
+                    this.outputPool.push("");
+
+                this.outputPool[this.outputPool.length-1] += ch;
+            }
+                
+                
 
         }.bind(this);
 
@@ -597,7 +618,7 @@ class Editor {
 
         this.runtimeController.run(this.fileSystem.getFile("runtime").path+this.fileSystem.getFile("runtime").name,
             fName,fName === "test" ? function () {
-                this.outputView.print( "TEST FINISHED" ,"test");
+                this.outputView.printLine( "TEST FINISHED" ,"test");
         }.bind(this) : null);
     
     
@@ -627,7 +648,7 @@ class Editor {
 
         this.loadSample('tests',i,false,function(fileSystem) {
     
-            this.outputView.print("Running Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+this.samplesData["tests"][i].name,"test");
+            this.outputView.printLine("Running Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+this.samplesData["tests"][i].name,"test");
     
             this.outputPool = [];
     
@@ -677,7 +698,7 @@ class Editor {
                         ok = false;
     
     
-                this.outputView.print(this.samplesData["tests"][i].name+" Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "success": 'error');
+                this.outputView.printLine(this.samplesData["tests"][i].name+" Test "+(i+1)+"/"+this.samplesData["tests"].length+": "+(ok ? "SUCCESS" : "FAIL"),ok ? "success": 'error');
     
                 if (i<this.samplesData["tests"].length-1)
                     this.runTest(i+1);

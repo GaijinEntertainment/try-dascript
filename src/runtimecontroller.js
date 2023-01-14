@@ -9,6 +9,7 @@ var Module = {
 
 
 
+
 class RuntimeController
 {
     constructor()
@@ -16,24 +17,36 @@ class RuntimeController
         this.loaded = false;
 
         this.onInit = null;
-        this.onPrint = null;
+        this.onPrintLine = null;
+        this.onPrintChar = null;
 
-        Module.print = function(text) {
+        
+        this.printByChar = true;
+        
+        Module.print = [
+            function(char) {
+                if (this.onPrintChar && this.printByChar)
+                    this.onPrintChar(char);
+            }.bind(this),
 
-                if (arguments.length > 1)
-                    text = Array.prototype.slice.call(arguments).join(' ');
+            function(line) {
+                if (this.onPrintLine && !this.printByChar)
+                    this.onPrintLine(line);
+            }.bind(this)
+        ]
 
-                
-                if (this.onPrint)
-                    this.onPrint(text);
-            }.bind(this);
       
 
         Module.onRuntimeInitialized = function() {
 
+            
+            // print hack
+            this.fixTTY();
+
             this.loaded = true;
             if (this.onInit)
                 this.onInit()
+                
     
         }.bind(this)
 
@@ -44,6 +57,23 @@ class RuntimeController
         return this.loaded;
     }
 
+    fixTTY()
+    {
+        
+        TTY.default_tty_ops.put_char = function(tty, val) {
+
+            out[0](String.fromCharCode(val))
+        
+            if (val === null || val === 10) {
+                out[1](UTF8ArrayToString(tty.output, 0));
+                tty.output = []
+            } else {
+                if (val != 0)
+                    tty.output.push(val)
+            }
+        }
+
+    }
 
 
     setFS(fileSystem)
@@ -100,9 +130,9 @@ class RuntimeController
         script.type = "text/javascript"
         document.body.appendChild(script);
 
-
     
     }
+
 
 
 
