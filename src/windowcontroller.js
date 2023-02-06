@@ -31,12 +31,14 @@ class WindowController
 
         this.columnOpenedDiv = [];
         this.columnHiddenDiv = [];
+        this.columnHiddenHeaderDiv = [];
 
         this.selectedSeparator = -1;
 
 
         this.mainBlockDiv = [];
         this.mainOptionsHeight = [];
+
 
         for (let i=0;i<this.columnNum;i++)
         {
@@ -49,6 +51,9 @@ class WindowController
 
             let mch = mc.getElementsByClassName("main_col_hidden")[0];
             this.columnHiddenDiv.push(mch);
+
+            let mchh = mch.getElementsByClassName("main_col_hidden_header")[0];
+            this.columnHiddenHeaderDiv.push(mchh);
 
             mc.getElementsByClassName("main_hide_col_button")[0].addEventListener("click",function() {
 
@@ -113,9 +118,12 @@ class WindowController
     }
 
 
+
     updateCol(updI)
     {
 
+
+        let horizontalView = window.innerHeight < window.innerWidth;
 
         let anchorCopy = -1;
         if (typeof updI !== "undefined")
@@ -225,50 +233,115 @@ class WindowController
 
 
 
+        let mainHeight = window.innerHeight-250;
+
+        let vertHeightHidden = 30;
+        let vertHeightOpened = 500;
+
+        if (mainHeight<500)
+            mainHeight = 500;
+
+
+        if (!horizontalView)
+        {
+            mainHeight =0;
+            for (let i=0;i<this.columnNum;i++)
+            {
+                mainHeight += this.colVisible[i] ? vertHeightOpened : vertHeightHidden;
+                if (i<this.columnNum-1)
+                    mainHeight+=10;
+
+            }
+
+        }
+
+
+
+        
 
         for (let i=0;i<this.columnNum-1;i++)
-            this.separatorDiv[i].style.left = (wp[i+1]-5)+"px";
+        {
+            if (horizontalView)
+            {
+                this.separatorDiv[i].style.left = (wp[i+1]-5)+"px";
+                this.separatorDiv[i].style.display = "block"
+            }
+            else
+            {
+                this.separatorDiv[i].style.display = "none"
+            }
+        }
+            
 
         for (let i=0;i<this.columnNum;i++)
         {
-            this.columnDiv[i].style.left = (wp[i]+this.separatorWidth-4)+"px";
-            this.columnDiv[i].style.width = (wp[i+1]-wp[i]-this.separatorWidth-2)+"px"
+            if (horizontalView)
+            {
+                    
+                this.columnDiv[i].style.left = (wp[i]+this.separatorWidth-4)+"px";
+                this.columnDiv[i].style.width = (wp[i+1]-wp[i]-this.separatorWidth-2)+"px"
+
+                
+                //this.columnDiv[i].style.top = "0px";
+                this.columnDiv[i].style.height = null;
+                this.columnDiv[i].style.marginBottom = "0px";
+
+                this.columnDiv[i].style.position = "absolute"
+            }
+            else
+            {
+
+                this.columnDiv[i].style.left = "10px";
+                this.columnDiv[i].style.width = (window.innerWidth-30)+"px"
+
+                
+                //this.columnDiv[i].style.top = (15)+"px";
+                this.columnDiv[i].style.height = ((this.colVisible[i] ? vertHeightOpened : vertHeightHidden))+"px";
+                this.columnDiv[i].style.marginBottom = "10px";
+
+                this.columnDiv[i].style.position = "relative"
+                
+            }
         }
         
-
-        
-
-        
-
         for (let i=0;i<this.columnNum;i++)
         {
             this.columnOpenedDiv[i].style.display = this.colVisible[i] ? "block" : "none";
             this.columnHiddenDiv[i].style.display = this.colVisible[i] ? "none" : "block";
+
+            this.columnHiddenHeaderDiv[i].classList.toggle("horizontal",!horizontalView);
+            this.columnHiddenHeaderDiv[i].classList.toggle("vertical",horizontalView);
         }
 
         for (let i=0;i<this.columnNum;i++)
         {
             let hide = this.columnOpenedDiv[i].getElementsByClassName("main_hide_col_button")[0];
+
+            let leftPos = this.colAnchor[i]===0 || !this.horizontalView;
          
-            hide.classList.toggle("left_anchor",this.colAnchor[i]===0);
-            hide.classList.toggle("right_anchor",this.colAnchor[i]!==0);
+            hide.classList.toggle("left_anchor",leftPos);
+            hide.classList.toggle("right_anchor",!leftPos);
 
             let show = this.columnHiddenDiv[i].getElementsByClassName("main_open_col_button")[0];
-            show.classList.toggle("left_anchor",this.colAnchor[i]===0);
-            show.classList.toggle("right_anchor",this.colAnchor[i]!==0);
+            show.classList.toggle("left_anchor",leftPos);
+            show.classList.toggle("right_anchor",!leftPos);
 
         }
 
 
-
-        let mainHeight = window.innerHeight-250;
-
-        if (mainHeight<500)
-            mainHeight = 500;
-
         for (let i=0;i<this.columnNum;i++)
-            this.mainBlockDiv[i].style.height = (mainHeight-this.mainOptionsHeight[i])+'px'
-
+        {
+            
+            if (horizontalView)
+            {
+                    
+                this.mainBlockDiv[i].style.height = (mainHeight-this.mainOptionsHeight[i])+'px'
+            }
+            else
+            {
+                this.mainBlockDiv[i].style.height = (500-this.mainOptionsHeight[i])+'px'
+            }
+        }
 
         document.querySelector(':root').style.setProperty('--main-height', mainHeight+'px');
 

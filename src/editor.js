@@ -272,7 +272,7 @@ class Editor {
 
 
         this.runtimeController.onInit = function() {
-            this.setPageStatus("","ready")
+            this.checkWASM();
         }.bind(this);
 
     }
@@ -374,7 +374,7 @@ class Editor {
 
 
             if (this.runtimeController.isLoaded())
-                this.setPageStatus("","ready")
+                this.checkWASM();
 
             if (onComplete)
                 onComplete(fileSystem);
@@ -384,6 +384,24 @@ class Editor {
 
     }
 
+    checkWASM() {
+
+        this.setPageStatus("Checking compatibility","waiting")
+
+
+        wasmFeatureDetect.simd().then((simdSupported) => {
+            if (simdSupported) {
+                this.setPageStatus("","ready")
+            } else {
+                this.setPageStatus("Browser doesn't support WASM SIMD","waiting")
+
+                console.error("No SIMD support")
+            }
+        })
+
+
+
+    }
 
     toJSON() {
         
