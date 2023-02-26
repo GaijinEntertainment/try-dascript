@@ -276,7 +276,7 @@ class Editor {
         }.bind(this);
 
         this.runtimeController.onAbort = function() {
-            this.setPageStatus("Browser doesn't support WASM (ABORTED 1)","waiting")
+            this.setPageStatus("Browser doesn't support WASM","waiting")
         }.bind(this);
 
 
@@ -381,7 +381,7 @@ class Editor {
             if (this.runtimeController.isLoaded())
                 this.checkWASM();
             if (this.runtimeController.aborted)
-                this.setPageStatus("Browser doesn't support WASM (ABORTED 2)","waiting")
+                this.setPageStatus("Browser doesn't support WASM","waiting")
 
 
             if (onComplete)
