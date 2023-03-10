@@ -15,8 +15,10 @@ class RuntimeController
     constructor()
     {
         this.loaded = false;
+        this.aborted = false;
 
         this.onInit = null;
+        this.onAbort = null;
         this.onPrintLine = null;
         this.onPrintChar = null;
 
@@ -48,6 +50,13 @@ class RuntimeController
                 this.onInit()
                 
     
+        }.bind(this)
+
+        Module.onAbort = function() {
+            this.aborted = true;
+            if (this.onAbort)
+                this.onAbort()
+
         }.bind(this)
 
     }
