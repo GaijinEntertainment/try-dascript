@@ -8,11 +8,14 @@ class OutputView
 
 
         this.outputDiv = document.getElementById("output");
-    
-        
+
         this.currentLine = null;
         this.currentTime = null;
         this.currentP = null;
+
+
+        this.runtimeOutput = [];
+
 
         
         this.currentText = "";
@@ -66,6 +69,8 @@ class OutputView
         this.currentText = "";
 
         this.outputDiv.scrollTop = this.outputDiv.scrollHeight;
+
+        this.runtimeOutput.push("");
     }
 
     
@@ -77,11 +82,15 @@ class OutputView
         {   
             this.currentText += ch;
             this.currentP.innerText = this.currentText;
+            this.runtimeOutput[this.runtimeOutput.length-1] = this.currentText;
         }
         this.currentTime.innerText = (new Date()).toISOString().substring(11, 23);
         
     }
 
+    resetRuntimeOutput() {
+        this.runtimeOutput = [""];
+    }
 
     printLine(text,type) {
 
@@ -101,9 +110,43 @@ class OutputView
         this.currentText = text;
         this.currentP.innerText = this.currentText;
         this.currentTime.innerText = (new Date()).toISOString().substring(11,23);
+        this.runtimeOutput[this.runtimeOutput.length-1] = this.currentText;
 
         if (this.currentText!=="")
             this.addLine();
+    }
+
+
+    loadFromJSON(json) {
+
+        for (let i=0;i<json.length;i++)
+        {
+            this.printLine(json[i],"")
+        }
+
+    }
+    toJSON() {
+
+        
+
+        let newArr = [];
+
+        let finalLength = 0;
+  
+        for (let i = 0; i < this.runtimeOutput.length; i++) {
+            let codeLength = this.runtimeOutput[i].length + 1;
+            
+            if (finalLength + codeLength <= 512) {
+                newArr.push(this.runtimeOutput[i]);
+                finalLength += codeLength;
+            } else {
+                newArr.push("...");
+                break;
+            }
+        }
+        
+
+        return newArr;
     }
 }
 
