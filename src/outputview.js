@@ -133,14 +133,14 @@ class OutputView
 
         let finalLength = 0;
   
-        for (let i = this.runtimeOutput.length - 1; i >= 0; i--) {
+        for (let i = 0; i < this.runtimeOutput.length; i++) {
             let codeLength = this.runtimeOutput[i].length + 1;
             
             if (finalLength + codeLength <= 512) {
-                newArr.unshift(this.runtimeOutput[i]);
+                newArr.push(this.runtimeOutput[i]);
                 finalLength += codeLength;
             } else {
-                newArr.unshift("...");
+                newArr.push("...");
                 break;
             }
         }
