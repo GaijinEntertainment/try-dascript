@@ -57,21 +57,27 @@ class Editor {
 
         if (window.location.hash)
         {
-            let p1 = window.location.hash.indexOf("s:")
-            let p2 = window.location.hash.indexOf(":s")
-
-            if (p1!==-1 && p2!==-1)
-                base64preset = window.location.hash.substring(p1+2,p2)
-                            
-
+            base64preset = this.getStatePart(window.location.hash,"s")
         }
 
 
         if (base64preset)
             {
-                this.loadStateFromBase64(base64preset,
-                    function() {loadDefaultSample = false;},
-                    null);
+                this.loadJSONFromBase64(base64preset,
+                    function(jData) {
+                        this.loadFromJSON(jData);
+                        loadDefaultSample = false;}.bind(this),
+                    function(e) {console.error(e)});
+
+                let base64output = this.getStatePart(window.location.hash,"o")
+
+                if (base64output)
+                    this.loadJSONFromBase64(base64output,
+                        function(jData) {
+                            this.outputView.loadFromJSON(jData);}.bind(this),
+                        function(e) {console.error(e)});
+
+                
             }
 
 
@@ -275,6 +281,8 @@ class Editor {
             this.checkWASM();
         }.bind(this);
 
+
+        
         this.runtimeController.onAbort = function() {
             this.setPageStatus("Browser doesn't support WASM","waiting")
         }.bind(this);
@@ -380,9 +388,9 @@ class Editor {
 
             if (this.runtimeController.isLoaded())
                 this.checkWASM();
+                
             if (this.runtimeController.aborted)
                 this.setPageStatus("Browser doesn't support WASM","waiting")
-
 
             if (onComplete)
                 onComplete(fileSystem);
@@ -435,11 +443,10 @@ class Editor {
     }
 
 
-    encodeStateToBase64()
+    encodeJSONToBase64(jData)
     {
 
 
-        let jData = this.toJSON();
 
         let jsonS = JSON.stringify(jData);
 
@@ -451,7 +458,7 @@ class Editor {
 
     }
 
-    loadStateFromBase64(base64, onSuccess, onError)
+    loadJSONFromBase64(base64, onSuccess, onError)
     {
 
 
@@ -467,17 +474,13 @@ class Editor {
                  
             let jData = JSON.parse(decodedS)
 
-            this.loadFromJSON(jData);
-
-
             if (onSuccess)
-                onSuccess()
+                onSuccess(jData)
         }
         catch (e)
         {
-            console.error(e)
             if (onError)
-                onError()
+                onError(e)
         }
 
     }
@@ -502,11 +505,18 @@ class Editor {
         }.bind(this),10)
     }
 
-    generateShareHash()
+    generateStateHash(editor,output)
     {
 
-        return "#s:"+this.encodeStateToBase64()+":s";
+        let s = "#";
 
+        if (editor)
+            s +="s:"+this.encodeJSONToBase64(this.toJSON())+":s";
+
+        if (output)
+            s +="o:"+this.encodeJSONToBase64(this.outputView.toJSON())+":o";
+
+        return s;
 
     }
 
@@ -517,7 +527,7 @@ class Editor {
 
         let mainUrl = window.location.protocol+'//'+window.location.host+window.location.pathname+"/";
 
-        let hash = this.generateShareHash();
+        let hash = this.generateStateHash(true,true);
 
         
 
@@ -633,8 +643,9 @@ class Editor {
     runCode() {
 
 
+        this.outputView.resetRuntimeOutput();
         
-        window.location.hash = this.generateShareHash();
+        window.location.hash = this.generateStateHash(true,false);
 
         let fName = this.funcName;
     
@@ -651,26 +662,47 @@ class Editor {
     
     }
 
+
+    getStatePart = function(s,ch)
+        {
+            
+            let p1 = s.indexOf(ch+":")
+            let p2 = s.indexOf(":"+ch)
+
+            if (p1!==-1 && p2!==-1)
+                return s.substring(p1+2,p2)
+            else
+                return null;
+        }
+
     stateHashUpdate()
     {
-        let fact = this.generateShareHash();
-        let cur = window.location.hash;
+
+        
+
+        let curH = this.generateStateHash(true,false);
+        let newH = window.location.hash
+
+        let curEditor64 = this.getStatePart(curH,"s");
+        let newEditor64 = this.getStatePart(newH,"s");
 
 
-        if (fact!==cur)
+
+
+
+        if (newEditor64!==curEditor64 && newEditor64)
             {
-
-                let p1 = cur.indexOf("s:")
-                let p2 = cur.indexOf(":s")
-    
-                if (p1!==-1 && p2!==-1)
-                    this.loadStateFromBase64(cur.substring(p1+2,p2))
-
+                this.loadJSONFromBase64(newEditor64, function(jData)
+                {
+                    this.loadFromJSON(jData);
+                }.bind(this))
             }
     }
 
 
     runTest(i) {
+
+        this.outputView.resetRuntimeOutput();
 
         this.loadSample('tests',i,false,function(fileSystem) {
     
