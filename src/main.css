@@ -409,13 +409,6 @@ footer {
 }
 
 
-
-
-
-
-
-
-
 @media (orientation: portrait)
 {
     .main-toolbar-break {
@@ -425,3 +418,63 @@ footer {
     }  
 
 }
+
+/* Checkbox */
+.checkbox_container {
+  display: block;
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkbox_container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkbox_icon {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  border: 1px solid #e2e2e2;
+  border-radius: 2px;
+}
+
+.checkbox_icon:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox_container input:checked ~ .checkbox_icon:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox_container .checkbox_icon:after {
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+} 
+
+
+
+
+
