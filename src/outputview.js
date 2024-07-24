@@ -20,12 +20,6 @@ class OutputView
         
         this.currentText = "";
     
-        document.getElementById("clear_output").addEventListener("click",function(){
-    
-            this.clear();
-        }.bind(this))
-
-
         this.addLine();
     }
   
@@ -90,6 +84,7 @@ class OutputView
 
     resetRuntimeOutput() {
         this.runtimeOutput = [""];
+        this.clear();
     }
 
     printLine(text,type) {
