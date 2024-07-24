@@ -240,7 +240,7 @@ body {
     display: inline-block;
     word-break: break-all;
     margin-block: 0;
-
+    white-space: pre;
 }
 
 #file_browser {
