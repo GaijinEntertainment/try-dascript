@@ -72,7 +72,7 @@ class WindowController
 
             
             let mcc = mc.getElementsByClassName("main_options")[0];
-            this.mainOptionsHeight.push(parseInt(mcc.style.height,10));
+            this.mainOptionsHeight.push(mcc.offsetHeight);
 
         }
     
