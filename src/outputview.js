@@ -16,8 +16,7 @@ class OutputView
 
         this.runtimeOutput = [];
 
-
-        
+        this.clearOutput = document.getElementById("clear_output");
         this.currentText = "";
     
         this.addLine();
@@ -84,7 +83,9 @@ class OutputView
 
     resetRuntimeOutput() {
         this.runtimeOutput = [""];
-        this.clear();
+        if (this.clearOutput.checked) {
+          this.clear();
+        }
     }
 
     printLine(text,type) {
